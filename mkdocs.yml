@@ -1,0 +1,14 @@
+site_name: Hands on with Red Hat Lightspeed in Satellite
+docs_dir: publishing-house/spec
+nav:
+- Home: index.md
+- Design Spec: design.md
+- Modules:
+  - Module 1 - Overview: modules/module-01-overview.md
+  - Module 2 - Hcc Vulnerabilities: modules/module-02-hcc-vulnerabilities.md
+  - Module 3 - Hcc Compliance: modules/module-03-hcc-compliance.md
+  - Module 4 - Satellite Advisor: modules/module-04-satellite-advisor.md
+  - Module 5 - Satellite Vulnerability: modules/module-05-satellite-vulnerability.md
+  - Module 6 - Recap: modules/module-06-recap.md
+plugins:
+- techdocs-core
