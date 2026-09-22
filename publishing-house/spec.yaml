@@ -16,8 +16,8 @@ project:
   automation_type: "ansible"
   description: "redhat-lightspeed"
   # content_reviewer_email and infra_reviewer_email are assigned by the RHDP team — not set by the author
-  jira_ticket: ""
-  workflow_id: ""
+  jira_ticket: "RHDPCD-2044"
+  workflow_id: "45b1c768-d43e-47d7-8b5a-fab445ea8673"
 
 spec:
   title: ""

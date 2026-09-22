@@ -12,22 +12,25 @@ metadata:
     ph.rhdp.io/migrated-repo: https://github.com/rhpds/zt-lb1187-hands-on-with-lightspeed-in-satellite
     backstage.io/techdocs-ref: dir:.
     github.com/project-slug: rhpds/redhat-lightspeed
-    ph.rhdp.io/created-at: 2026-09-22T12:28:17.204Z
+    ph.rhdp.io/created-at: 2026-09-22 12:28:17.204000+00:00
   tags:
-    - publishing-house
-    - lab
-    - rhdp-published
-    - migration
+  - publishing-house
+  - lab
+  - rhdp-published
+  - migration
   links:
-    - url: https://github.com/rhpds/redhat-lightspeed
-      title: Repository
-      icon: github
-    - url: https://devspaces.apps.ocpv-infra02.wdc07.infra.demo.redhat.com#https://github.com/rhpds/redhat-lightspeed
-      title: Open in DevSpaces
-      icon: catalog
-    - url: https://central-api-publishing-house.apps.ocpv-infra02.wdc07.infra.demo.redhat.com
-      title: Central
-      icon: dashboard
+  - url: https://github.com/rhpds/redhat-lightspeed
+    title: Repository
+    icon: github
+  - url: https://devspaces.apps.ocpv-infra02.wdc07.infra.demo.redhat.com#https://github.com/rhpds/redhat-lightspeed
+    title: Open in DevSpaces
+    icon: catalog
+  - url: https://central-api-publishing-house.apps.ocpv-infra02.wdc07.infra.demo.redhat.com
+    title: Central
+    icon: dashboard
+  - url: https://redhat.atlassian.net/browse/RHDPCD-2044
+    title: Jira Epic
+    icon: dashboard
 spec:
   type: content
   lifecycle: experimental
