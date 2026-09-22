@@ -1,0 +1,32 @@
+---
+antora:
+  name: modules
+  dir: www
+  modules:
+    - name: "module-01"
+      label: "Overview"
+      solveButton: false
+    - name: "module-02"
+      label: "CVEs"
+      solveButton: false
+    - name: "module-03"
+      label: "Compliance"
+      solveButton: false
+    - name: "module-04"
+      label: "Lightspeed Advisor in Satellite"
+      solveButton: false
+    - name: "module-05"
+      label: "Lightspeed Vulnerability in Satellite"
+      solveButton: false
+    - name: "module-06"
+      label: "Conclusion"
+
+tabs:
+  - name: "Satellite Web UI"
+    url: https://satellite-${guid}.${domain}/
+  - name: "satellite terminal"
+    url: /wetty_satellite/ssh/root
+  - name: "rhel-${guid}-1 terminal"
+    url: /wetty_rhel-${guid}-1
+  - name: "rhel-${guid}-2 terminal"
+    url: /wetty_rhel-${guid}-2/ssh/root

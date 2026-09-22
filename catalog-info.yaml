@@ -1,0 +1,35 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: redhat-lightspeed
+  title: redhat-lightspeed
+  description: redhat-lightspeed
+  annotations:
+    ph.rhdp.io/content-type: lab
+    ph.rhdp.io/deployment-mode: rhdp_published
+    ph.rhdp.io/github-user: JBSpinks
+    ph.rhdp.io/owner: mitsharm@redhat.com
+    ph.rhdp.io/migrated-repo: https://github.com/rhpds/zt-lb1187-hands-on-with-lightspeed-in-satellite
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: rhpds/redhat-lightspeed
+    ph.rhdp.io/created-at: 2026-09-22T12:28:17.204Z
+  tags:
+    - publishing-house
+    - lab
+    - rhdp-published
+    - migration
+  links:
+    - url: https://github.com/rhpds/redhat-lightspeed
+      title: Repository
+      icon: github
+    - url: https://devspaces.apps.ocpv-infra02.wdc07.infra.demo.redhat.com#https://github.com/rhpds/redhat-lightspeed
+      title: Open in DevSpaces
+      icon: catalog
+    - url: https://central-api-publishing-house.apps.ocpv-infra02.wdc07.infra.demo.redhat.com
+      title: Central
+      icon: dashboard
+spec:
+  type: content
+  lifecycle: experimental
+  owner: rhdp-team
+  system: publishing-house

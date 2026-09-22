@@ -1,0 +1,433 @@
+:imagesdir: ../assets/images
+
+= Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate and remediate CVEs.
+
+Your first task for Infinicorp is to review the internet connected RHEL 9.7 system to identify if there are any common vulnerabilities and exposures (CVEs) that are critical or important which need to be addressed.
+
+To perform this task you will use the Red Hat Lightspeed capabilities on the https://console.redhat.com[Hybrid Cloud Console^].
+
+There are thousands of CVEs - Red Hat Lightspeed helps you to focus on CVE information that pertains to Red Hat systems. Some CVEs have gone through additional evaluation to share deep threat analysis specific to the version of RHEL your system is running.  
+
+Expand a section below to complete the tasks in that section.  
+Please complete each section in order.
+
+=====
+.Log in to the Hybrid Cloud Console
+[%collapsible]
+====
+
+
+Please use a web browser to navigate to the https://console.redhat.com[Hybrid Cloud Console^] <-- Click to open in a new tab. +
+Log into the Hybrid Cloud Console with the following credentials: +
+
+NOTE: If you are a regular user of the Hybrid Cloud Console it is recommended to use an incognito or private browser instance to prevent overlap with cookies.  
+
+User:
+[source,sh,role=execute]
+----
+ rhpd-lightspeed-lb1187
+----
+
+Password:
+[source,sh,role=execute]
+----
+rhdp*lightspeed2026!
+----
+
+(Move onto the next section, but don’t leave this page.) +
+====
+=====
+
+
+=====
+.View Vulnerabilities
+[%collapsible]
+====
+
+On the main page locate the `Red Hat Enterprise Linux` tile in the upper left and click https://console.redhat.com/insights/[RHEL^]. +
+
+.Hybrid Cloud Console Home Page
+image::lb1187_M2_HCCHomePage.png[link=self, window=blank, width=100%]
+
+
+
+On the left hand navigation bar go to `Security → Vulnerability → CVEs`
+
+NOTE: Depending on your screen resolution the left hand navigation bar may automatically minimize.  You may need to click the hamburger menu (3 lines stacked on top of each other) in the upper left corner in order to see the menu bar.
+
+This page is showing you the CVEs of all systems registered to Red Hat Lightspeed in your environment. +
+
+
+The summary bar at the top of the page helps you focus on the most impactful issues in your environment.  If you have a high number of CVEs in your environment, this summary bar highlights the biggest risks that you should likely focus on addressing first.  Clicking on any of the numbers in the summary bar will apply filters that will show you these CVEs.
+
+.Vulnerability Summary Bar
+image::Vuln_SummaryBar.png[link=self, window=blank, width=100%]
+
+
+NOTE: The numbers you see may not match what is shown in the screenshot above.  That is expected.
+
+Here is an explanation of the items in the summary bar: +
+
+* `CVEs with known exploits` indicate unpatched CVEs with known public exploits.  CVEs with this label should be addressed with high priority due to the risks posed by them. "Known exploit" does not mean we have taken steps to determine if the CVE has been exploited in your environment.
+* `CVEs with security rules` indicate CVEs that have gone through the "Product Security Incident Response Plan" that takes a deeper look at impactful CVEs and adds deep threat intelligence on how the vulnerability impacts Red Hat systems.  This could include things like executive summaries, alternative mitigation strategies, and related CVEs that need to be considered.  Red Hat Lightspeed takes this information and makes it more succinct through the use of what we call security rules.  
+* `CVEs with critical severity`.  Critical ratings are given to flaws that could be easily exploited by a remote unauthenticated attacker and lead to system compromise (arbitrary code execution) without requiring user interaction. These are the types of vulnerabilities that can be exploited by worms. 
+* `CVEs with important severity`.  Important ratings are given to flaws that can easily compromise the confidentiality, integrity, or availability of resources. These are the types of vulnerabilities that allow local users to gain privileges, allow unauthenticated remote users to view resources that should otherwise be protected by authentication, allow authenticated remote users to execute arbitrary code, or allow remote users to cause a denial of service.
+
+
+The default view also applies a number of filters.
+
+.Vulnerability Filters
+image::Vuln_DefaultFilters.png[link=self, window=blank, width=100%]
+
+
+* The first filter chips show you only CVEs that affect `1 or more systems` in your infrastructure.  This could be a Conventional (RPM-DNF based) system or an Immutable (OSTree based) system.  
+* The second filter only shows you CVEs with an `Advisory Available`.  That means you are looking at vulnerabilities that you can fix.
+
+Combining these two filters together means that the initial focus is on CVEs that are affecting your system AND CVEs that you can remediate. +
+
+(Move onto the next section, but don’t leave this page.) +
+====
+=====
+
+=====
+.List all systems with a specific vulnerability
+[%collapsible]
+====
+
+As you’re logged into Red Hat Lightspeed, an urgent instant message arrives from the Infinicorp Security Operations (SecOps) team.  +
+
+SecOps was just made aware of https://access.redhat.com/errata/RHSA-2025:22790[RHSA-2025:22790] which is a vulnerability that affects WebKitGTK. As many as 18 CVEs are associated with this patch and SecOps wants to know if we have any systems with this vulnerability.  There are multiple CVEs on this issue, one such CVE number is   `CVE-2025-43458`.
+SecOps has asked for a report of how many systems are impacted by `CVE-2025-43458` as soon as possible. 
+
+In the previous section you left off where you were viewing the default filters.
+
+.Vulnerability Filters
+image::Vuln_DefaultFilters.png[link=self, window=blank, width=100%]
+
+From the vulnerability page the default filter is `CVE` (located to the right of the empty checkbox in the image above).  You can type the CVE number in the search box OR even a common search term that might be present in the CVE description like `GTK`.   +
+
+1. In the search box type: *43458*
+
+[start=2]
+2. This will return `CVE-2025-43458`. +
+Notice that a new filter chip has been added for `Search term: 43458` +
+3. In the row with the CVE ID you will see basic information about the CVE including the number of systems that are impacted by the CVE. +
+4. Click on the CVE ID for https://console.redhat.com/insights/vulnerability/cves/CVE-2025-43458[CVE-2025-43458^]  .
+
+.CVE-2025-43458 Summary
+image::lb1187_M2_cve43458.png[link=self, window=blank, width=100%]
+
+
+In the upper right of the page you will see a `Business risk` and a `Status`.  In the screenshot above they are shown as `Not defined` and `Not reviewed` respectively.  
+
+NOTE: You may see a different Business risk or Status than `Not defined` or `Not reviewed`.  That is ok.
+
+`Business risk` is intended for you to be able to define a risk that is specific to your business - this CVE is tagged with a severity of important, but if you have a workload that is deeply affected by this vulnerability, then this may be a more critical issue for you.   +
+
+[start=5]
+5. Click `Actions` in the upper right. You will have the option to `Edit business risk`.  Click this option. +
+You can set the business risk to: 
+
+* Critical
+* High
+* Medium
+* Low
+* Not defined  
+
+You can also add a justification note as to why you set the business risk.   +
+
+[start=6]
+6. Click `Cancel` so that you make no changes at this time.
+
+NOTE: You aren't making any changes so that you don't impact what other people taking the lab might see.  If you change the status of the CVE then it will change for other people.
+
+[start=7]
+7. Similarly, click `Actions` in the upper right. You will have the option to `Edit status`. Click this option. +
+You can use the status field to identify where you are in the mitigation process.   +
+Status options are:
+
+* Not reviewed
+* In review
+* On-hold
+* Scheduled for patch
+* Resolved
+* No action - risk accepted
+* Resolved via mitigation
+
+You can also add a justification note to indicate any details about the status that you select. +
+
+[start=8]
+8. Click `Cancel` so that you make no changes at this time.
+
+9. Locate the export button (just to the right of the `Plan remediation` button).  It looks like this:
+
+.Export Button Location
+image::Insights_Export_Botton_and_Bar.png[ExportButton,85%,85%] 
+
+
+
+[start=10]
+10. Click the export button which will give you the option to export this list into CSV or JSON formats. +
+
+You should know that the exported data is WYSIWYG (what you see is what you get). +
+If you apply any filters to the view, those filters will affect what is exported.
+
+In other words, getting a list of systems impacted by a vulnerability takes just seconds - search for the CVE then export the list of impacted systems.
+
+You now have the info that SecOps has requested, but you know that Infinicorp SecOps is going to ask for a remediation playbook to fix the issue for approval.  You also see that Red Hat Lightspeed can generate a playbook for you.  +
+
+(Move onto the next section, but don’t leave this page.) +
+
+====
+=====
+
+=====
+.Generating a remediation playbook
+[%collapsible]
+====
+
+Red Hat Lightspeed can generate playbooks for all CVEs with errata.  Doing this is very simple. +
+Make sure you are looking at https://console.redhat.com/insights/vulnerability/cves/CVE-2025-43458[CVE-2025-43458^]. +
+If you are following along in the guide you should already be in the right place. +
+This view will list all of the systems that are affected by https://console.redhat.com/insights/vulnerability/cves/CVE-2025-43458[CVE-2025-43458^].
+
+1. Find and locate your system, then click the checkbox to the left of your system's name. +
+
+Reminder: your system name is: `rhel-{guid}-1` +
+
+[start=2]
+2. Once you have hosts selected, click the `Plan remediation` button which will launch a wizard that will create a playbook for you.
+
+You can add this fix to an existing playbook or you can create a new playbook.  Red Hat Lightspeed defaults to `Create new playbook` which is what you are going to use. +
+   
+[start=3]
+3. Name your playbook: *43458 fix {guid}*
+
+Reminder: your system name is: `rhel-{guid}-1`
+
+NOTE: Please name the playbook as shown above. This will help with automated cleanup tasks.  
+
+[start=4]
+4. Click `Next`. +
+At this time you are fixing this issue on all listed systems.  
+
+5. Click `Next`. +
+Review the summary.  Notice that a reboot is required to resolve this issue.  +
+Be aware that you do have the option to disable the reboot in the playbook by clicking the `Turn off autoreboot` text in blue. +
+
+6. Click `Submit`. +
+At the bottom of the wizard there is a link that will allow you to `Open playbook 43458 fix {guid}`.   +
+
+
+7. Click the link.  This will redirect you to the Remediations section of the Hybrid Cloud Console. +
+For context, in the left hand navigation bar you have just been redirected to `Automation Toolkit → Remediation Plans`.
+
+From the remediations page, while looking at your remediation plan you created, you have a couple of options in the upper right. +
+The `Execute` button is unavailable.  Your user in this lab does not have permission to execute remediation.  No user gets this permission by default - it has to be explicitly provided. +
+*With so many people taking this lab at the same time we have opted to not enable this feature.*  +
+We do have an interactive demo that can show you how this works, end to end that will be at the end of this module. +
+
+[start=8]
+8. Click the Download button. +
+The playbook is downloaded via your browser.  The exact steps may vary per browser, in chrome you click save to save the file. +
+To view the playbook you will need to locate the downloaded file then open the .yml file in a text editor.
+
+This playbook can help simplify the resolution of this issue - you could easily adapt this to run via ansible automation or sync this playbook with Ansible Automation Platform (AAP) - this is covered in the AAP documentation but we are not covering it in this lab. +
+
+[start=9]
+9. Close the playbook and return to the Hybrid Cloud Console browser window.
+
+Now that you have both the list of systems affected by CVE-2025-43458 and a remediation playbook you send those back to your SecOps team for their review. + 
+With that urgent task taken care of, let’s go ahead and return to the original task of seeing what CVEs need addressed on the RHEL 9.7 host. +
+
+(Move onto the next section, but don’t leave this page.) +
+
+====
+=====
+
+=====
+.List all critical or important CVEs impacting your system
+[%collapsible]
+====
+
+Let’s return to the vulnerability page and look at your specific host with the goal of getting a list of all CVEs which are critical or important that affect your specific host.
+
+1. On the left hand navigation bar go to `Security → Vulnerability → Systems` +
+
+2. Locate your host and click on the hostname. +
+
+Reminder: your system name is: `rhel-{guid}-1`
+
+This view will show you all of the vulnerabilities present on this specific host. +
+
+[start=3]
+3. Notice that the default filter applied is `Advisory: Available`. +
+
+This means we are showing you all CVEs that have an advisory available (in other words - we are showing you all of the vulnerabilities that you can fix). +
+Because we are showing you only CVEs with advisories, in the remediation column on the far right, almost every CVE has the option for a remediation playbook - meaning Red Hat Lightspeed can generate a playbook for almost all of these CVEs.
+
+[start=4]
+4. Your specific task is to identify critical or important CVEs.  The filters are key to finding that information quickly and easily. +
+Locate the CVE filter and click it - this will provide you a list of items you can filter on. +
+
+5. Click `Severity`. +
+6. Click the `Filter by severity` drop down box. +
+7. Select `Critical` and `Important`. +
+When selected this should look like the image below.
+
+.CVE Severity Filter
+image::lb1187_M2_CVESeverity.png[link=self, window=blank, width=100%]
+
+NOTE: you may need to click outside of the filter box to get it to close.
+
+If you just need the list of critical and important CVEs that you can fix - exporting this list will get you what you need. +
+However, sometimes you need a complete list of system vulnerabilities - the CVEs with and without errata. + 
+Red Hat Lightspeed can show you this information as well.
+
+[start=8]
+8. Take note of the number of CVEs listed for the host.  These are shown in the upper right side of the list of CVEs. +
+
+In the image below there are 14 critical or important CVEs with errata on the host in the image - the number you see may differ.
+
+.Critical or Important CVEs with errata
+image::lb1187_M2_CVE_w_errata.png[lb1187_M2_CVE_w_errata,85%,85%] 
+
+
+The GTK issue we identified earlier is responsible for all of these CVEs, so addressing that will handle the bulk of the issues.  +
+
+Compared to scanners like Nessus and Crowdstrike this is a more narrow picture of vulnerabilities. +
+Remember that the default filters focus on things we can fix - as a result you’re only looking at CVEs that have errata.  Ones that we can do something about.  To get a full picture we need to see CVEs both with and without errata.  This will help us identify CVEs that may come up on SecOps scanning tools, but that we cannot fix in this version of RHEL.
+
+
+[start=9]
+9. Now - click the `x` to the right of the `Advisory: Available` filter chip to remove it.   +
+This will show you all CVEs in the database that affect this system - with and without advisories. +
+
+10. Look again at the number of CVEs - the number is significantly larger!
+
+In the image below there are 55 critical or important CVEs when looking at the full picture - these are CVEs with and without errata.  Having this information gives us a full view of all of the issues that affect your RHEL hosts - the ones you can fix as well as the ones you can’t.
+
+.Critical or Important CVEs with or without errata
+image::lb1187_M2_CVE_wo_errata.png[lb1187_M2_CVE_wo_errata,85%,85%] 
+
+
+The advisory column will tell you if the CVE has an advisory available to resolve the CVE.  
+
+[start=11]
+11. If you click the export button (just to the right of the Plan remediation button) you have the option to export this list into CSV or JSON formats. +
+Again - you can get a list of all of the CVEs that impact a specific system very quickly.
+
+.Export button
+image::Insights_Export_Button.png[Insights_Export_Button,85%,85%]
+
+With this list of CVEs exported you now have a full picture of the Critical and Important CVEs that affect this RHEL 9.7 system and you can send that onto the SecOps team for their review.  
+
+While you’re investigating the vulnerabilities you can’t help but notice the reports section. Maybe some of these reports will help you provide critical information to SecOps in the future. + 
+You should take a look while you’re here. +
+(Move onto the next section, but don’t leave this page.) +
+
+====
+=====
+
+=====
+.Executive Report
+[%collapsible]
+====
+
+1. On the left hand navigation bar go to `Security → Vulnerability → Reports` +
+There are three types of reports - an executive report, a customizable CVE report, and a report by operating system versions. +
+2. Start with the executive report - click `Download PDF`. +
+The PDF file will be downloaded via your browser.   +
+
+NOTE: It may take a moment for the report to be generated. The report is downloaded via your browser.  The exact steps may vary per browser, in chrome you click save to save the file. 
+
+[start=3]
+3. Locate and open the report. +
+The executive report shows you a summary of the systems, CVEs, and security rules. +
+The report then breaks down the CVEs by CVSS (Common Vulnerability Scoring System) score, identifies the top 3 CVEs in your environment, and the top 3 security rules. +
+This is a nice pre canned report that you can send to your management or SecOps team.  +
+4. Close the report and return to the reports page of the Hybrid Cloud Console. +
+
+(Move onto the next section, but don’t leave this page.) +
+====
+=====
+
+=====
+.Report by CVEs
+[%collapsible]
+====
+
+The information in the executive report may not exactly meet your needs, which is where the customizable report comes in.   +
+In the past you have been asked to provide your SecOps team with a list of all vulnerabilities with a CVSS score from 6-10 that have been released in the last 90 days.  You should try this with the Report by CVEs option.
+
+1. Under `Report by CVEs` click `Create report`. +
+This opens a window where you can identify what you want the report to contain. +
+
+.Report by CVEs Wizard
+image::lb1187_M2_CVEReport.png[link=self, window=blank, width=100%]
+
+[start=2]
+2. Complete the report wizard +
+* If desired you can change the `Report title`.
+* Locate the `CVSS base score` filter and change this to read 6.0 - 10 (you can type in the number or use the arrows). +
+* Locate `Publish date` and select the `Last 90 days`. +
+* Add `User notes` if desired. +
+* Click `Export report`. +
+The PDF file will be downloaded via your browser.   
+3. Locate and open the report. +
+This report will show you the information that you selected - in this case all CVEs with a CVSS base score between 6.0 and 10 within the last 90 days. +
+
+NOTE: It may take a moment for the report to be generated. The report is downloaded via your browser.  The exact steps may vary per browser, in chrome you click save to save the file. 
+
+[start=4]
+4. When finished reviewing, close the report and return to the Hybrid Cloud Console.
+
+(Move onto the next section, but don’t leave this page.) +
+====
+=====
+
+=====
+.Report by operating system versions
+[%collapsible]
+====
+
+Infinicorp wants to know the benefits of moving older versions of RHEL to newer versions in terms of the number of Vulnerabilities known for the minor release.  
+Their current RHEL 9 deployments tend to be on the latest version or on one of the Extended Update Support (EUS) versions of RHEL - typically 9.2 or 9.4. 
+
+This report will provide you a breakdown of vulnerabilities affecting the minor operating system versions of your RHEL systems.  
+
+1. Under `Report by operating system versions` click `Create report`. +
+This opens a window where you can identify what you want the report to contain. +
+
+[start=2]
+2. Complete the report wizard +
+* If desired you can change the `Report title`.
+* Select `RHEL 9.7`, `RHEL 9.4` and `RHEL 9.2` 
++
+NOTE: You can only compare within the same major version of RHEL.  With RHEL 9.x selected you cannot select another major version of RHEL to compare.
++
+* Notice that you can filter the CVE severity - Critical, Important, Moderate, and/or Low.  Leave this as the default of All.
+* Notice that you can filter the `Advisory:Available` option to `Not Available` or All (Select both options).  This would allow you to report on CVEs without errata.  Leave this as the default of All. 
+* If desired, add user notes about the report. 
+* You can export to PDF or CSV.  Click `Export PDF`.
+* The report will be downloaded via your browser.
+
+NOTE: It may take a moment for the report to be generated. The report is downloaded via your browser.  The exact steps may vary per browser, in chrome you click save to save the file. 
+
+[start=3]
+3. Locate and open the report.
+4. Notice that the report will show you the CVEs reported for the specific minor versions of RHEL that you selected. + 
+If you scroll to the second page of the report you can see a graph of the severity breakdown. +
+Unsurprisingly, newer versions of RHEL have less CVEs. +
+5. When finished reviewing, close the report and return to the Hybrid Cloud Console. 
+
+====
+=====
+
+If you want to see remediation of a vulnerability work end-to-end, please check out this https://app.arcade.software/share/Rj6M0j5j34kdlq5KGiAz?embed&embed_mobile=tab&embed_desktop=inline&show_copy_link=true[interactive demo on Evaluating systems for Common Vulnerabilities and Exposures (CVEs)^]: +
+
+
+With this exercise you have reviewed the internet connected RHEL 9.7 system to identify if there are any common vulnerabilities and exposures (CVEs) that are critical or important which need to be addressed. 
+You also dealt with an unplanned request from the SecOps team to provide them information on any vulnerabilities of WebKitGTK which exist in the environment, and you generated a remediation playbook that can fix the WebKitGTK issues.
+
+This module is complete.

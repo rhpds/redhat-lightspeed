@@ -1,0 +1,278 @@
+:imagesdir: ../assets/images
+
+= Red Hat Lightspeed advisor in Satellite
+
+Infinicorp has a disconnected environment that leverages Red Hat Satellite for Red Hat Enterprise Linux (RHEL) management. +
+Due to the sensitive nature of the information processed in this environment, no internet connectivity is allowed.  Since Red Hat Lightspeed primarily uses the Hybrid Cloud Console for analysis, historically the use of these types of tools hasn’t been possible since they require a connection to the internet.  +
+Now that Red Hat has released Red Hat Lightspeed in Satellite, some of the Red Hat Lightspeed capabilities are now available for disconnected environments. +
+
+The Red Hat Lightspeed advisor in Satellite feature is now generally available in Satellite 6.18 and offers the advisor capability as well as remediation. +
+The Red Hat Lightspeed vulnerability service is released in technology preview status and provides vulnerability scanning.
+
+Please refer to this support document for more information about https://access.redhat.com/support/offerings/techpreview[Technology Preview Features - Scope of Support^].
+
+Infinicorp has provided you with a preconfigured Red Hat Satellite 6.18 server and a RHEL 10.1 host to evaluate the capabilities of Red Hat Lightspeed in Satellite.  In the interest of time, all set up tasks for the Satellite server have already been completed for you.
+
+In this environment your first task is to review the Satellite connected 10.1 host to see if there are any recommendations to improve the reliability, performance, or security of the host. 
+
+== Host recommendations with Red Hat Lightspeed in Satellite - 
+
+First, we’ll log into the Red Hat Satellite Web User Interface (UI). Satellite has been preinstalled and installation and configuration of Lightspeed in Satellite is out of scope for this lab.
+
+Expand a section below to complete the tasks in that section.  
+Please complete each section in order.
+
+=====
+.Analyzing your RHEL server for recommendations
+[%collapsible]
+====
+
+While using Red Hat Lightspeed in Satellite, you can manually perform a system analysis by running the `insights-client` command on the host.
+This should already be scheduled to be done automatically, but for the purposes of the lab we will go ahead and log into the second RHEL host and manually run this command.
+
+NOTE: Though the name of Insights changed to Red Hat Lightspeed, packages, command lines, and APIs still refer to 'insights'.  As such, the 'insights-client' command is still the correct one to use.
+
+1. From your showroom environment, click the tab labeled `rhel-{guid}-2 terminal`.
+
+.rhel-{guid}-2 terminal tab
+image::host2-terminal.png[../assets/host2-terminal-tab]
+
+[start=2]
+2. Run the following command:
+
+[source,bash,run]
+----
+insights-client
+----
+
+Running the insights-client command will collect and upload data to Satellite which will run the advisor analysis locally.
+
+.Output of insights-client command
+image::self-managed_insights-client_output.png[link=self, window=blank, width=100%]
+
+NOTE: The insights-client will still include output information as if it is connected to console.redhat.com. No information is actually sent to the Hybrid Cloud Console.
+
+Do not move onto the next step until the operation is complete and you are returned back to the terminal prompt as shown in the image above. 
+====
+=====
+
+=====
+.Log in to the Satellite Web UI
+[%collapsible]
+====
+
+. Click on the tab labelled Satellite Web UI as shown in the image below.
+
+.Satellite Web UI tab
+image::satellite-webui-tab.png[link=self, window=blank, width=100%]
+
+[start=2]
+. Log in credentials
+
+To log in, you’ll need the following credentials to log into the Satellite Web UI.
+
+You can copy and paste each of them below.
+
+[source,js]
+----
+admin
+----
+
+[source,js]
+----
+bc31c9a6-9ff0-11ec-9587-00155d1b0702
+----
+
+Now click `+Log In+`.
+
+.Login menu
+image::lb1187_M4_SatLogonPage.png[../assets/webuilogin]
+
+You will be taken to the main dashboard.
+
+.Satellite WebGUI dashboard
+image::main-menu.png[../assets/main-menu]
+
+[start=3]
+. Once logged in, on the left hand navigation bar expand the `Red Hat Lightspeed` menu. +
+
+You will see `Recommendations` and `Vulnerability`.
+
+.Red Hat Lightspeed in Satellite Menu
+image::Sat_Insights_Connected_Menu.png[../assets/Sat_Insights_Connected_Menu]
+
+[start=4]
+. Select `Recommendations`.
+
+(Move onto the next section, but don’t leave this page.) +
+====
+=====
+
+=====
+.Viewing and fixing Red Hat Lightspeed Recommendations
+[%collapsible]
+====
+
+Return to the Satellite Web UI to review and fix any issues detected by Red Hat Lightspeed in Satellite.
+
+You should already be in the Recommendations section.  If not, in the Web UI expand `Red Hat Lightspeed` then click `Recommendations`. +
+
+. While in the Recommendations section, locate the issue named "Decreased security: OpenSSH ClientAlive settings". +
+
+Red Hat Lightspeed has found a recommendation that affects system security.  It has detected that the OpenSSH ClientAlive settings are not in line with security best practices. +
+
+Notice that Red Hat Lightspeed gives you a `Category` type of security.  +
+Possible options are: 
+
+* Availability
+* Performance
+* Stability
+* Security
+
+You are also given a `Total risk` level. + 
+Possible options are: 
+
+* Critical
+* Important
+* Moderate
+* Low
+
+You also get a count of how many systems are impacted.  In this case only one system is impacted since that is all that we have registered to this environment.  
+
+Finally, you get a `Remediation type`. +
+Possible options are: 
+
+* Playbook
+* Manual
+
+Since the type is `Playbook` this means that there is an Ansible playbook available to remediate the issue that is found. +
+
+To get more details you will need to select the issue.
+
+.Recommendation page
+image::decreased-security-advisor.png[]
+
+[start=2]
+. Click the issue. You'll be taken to a new page containing the details of the issue.
+
+.OpenSSH Recommendation details page
+image::decreased-security-advisor-details.png[]
+
+The details page gives you high level information about the risk that was found and links to a Knowledgebase article if you need to get more information about the issue.  +
+
+The `Total risk` section lets you know about the likelihood of encountering the issue as well as the impact when the issue is encountered.  Combined this provides a risk score which in this case is moderate. +
+
+The `Risk of change` section lets you know about the risk of making a change to your system, as well as if the recommended change requires a reboot.  In this case the risk of change is very low and a reboot is not required.  
+
+In summary, this recommendation affects our RHEL host.  
+It is a moderate risk with a very low risk of change. 
+Red Hat Lightspeed offers a playbook to fix the issue.  
+
+You should go ahead and create a playbook that you can evaluate and send to the SecOps team for review and approval.
+
+[start=3]
+
+. Select the hosts that are affected by the issue by clicking on the checkbox to the left of the host name.
+
+.Select affected systems
+image::selected-hosts.png[]
+
+[start=4]
+. With a host selected, both the `Remediate` and the `Download playbook` buttons become available. +
+These playbooks are created by Red Hat and are supported, but it is always best to review the playbook first to see what it is doing and determine if any modifications are needed. +
+
+. Click `Download playbook`. +
+Depending on your browser, additional selections may be needed to download the .yml file.  
+
+. Locate and open the playbook. +
+The .yml file should open with any text editor. +
+Review the playbook. +
+Notice that there are signatures included to help identify that the playbook was created by Red Hat. +
+The playbook is generally pretty simple and does the following: +
+* Update ClientAliveInterval setting to 300
+* Update ClientMaxAlive setting to 0
+* Restarts the sshd service so the service accepts the updated values
+* Runs the `insights-client` command to identify the issue has been fixed and to remove the recommendation.
+
+This playbook is very simple, and Infinicorp has already approved you running Red Hat provided playbooks in the Satellite test environment. +
+This playbook is safe for you to run.
+
+When you have finished reviewing, close the playbook and return to the Satellite UI.
+
+[start=7]
+. Click the `Remediate` button. +
+This will open a window that will summarize the recommendation, the resolution (or resolution options if there is more than one way to resolve the issue), and will let you know if a reboot of the system is needed. +
+In this case the default resolution is to set the ClientMaxAlive and ClientAliveInterval values to best practice settings and then restart the sshd service.  These steps do not require a reboot. +
+. Click `Remediate`. +
+This will redirect you to Monitor → Jobs where you can see the job running that you just initiated. This job may take 2-5 minutes to complete. Wait for the results to show success. +
+
+.Remediation status page
+image::remediation-status.png[link=self, window=blank, width=100%]
+
+
+[start=9]
+. Return to the list of Red Hat Lightspeed recommendations. +
+In the left hand navigation bar, click Red Hat Lightspeed -> Recommendations. +
+You should notice that the `Decreased security: OpenSSH ClientAlive settings` recommendation no longer appears.
+
+====
+=====
+
+=====
+.How to see all recommendations
+[%collapsible]
+====
+
+A common question that gets asked with regards to Red Hat Lightspeed and the recommendations that it offers is how can I see the list of recommendations? + 
+For example, are there recommendations for a database like SAP? +
+
+Fortunately this is very easy to see inside of the Satellite user interface (or in the Hybrid Cloud Console). +
+
+From the last section you should be in the Satellite user interface in Red Hat Lightspeed → Recommendations.  
+
+.All Recommendations fixed
+image::lb1187_M4_NoRecommendations.png[link=self, window=blank, width=100%]
+
+Notice in the image above that while you have no recommendations, there are still default filters applied. +
+This is because Red Hat Lightspeed wants to focus on things that are actively impacting your systems. +
+The default filters are `Systems impacted: 1 or more` and `Status: Enabled`.
+In other words, show me issues that affect my systems and that are enabled.
+
+To see the full list of recommendations, you will need to remove these filters and then search the list of recommendations.
+
+1. Locate the filters and remove the two default filters by clicking the `x` to the right of them. +
+In the image below there are 1951 total recommendations listed. +
+
+.Filters removed
+image::lb1187_M4_NoFilters.png[link=self, window=blank, width=100%]
+
+With the full list showing, all you need to do is search.
+
+[start=2]
+2. In the `Filter by name` box type *SAP*. +
+This will list all Recommendations that have SAP in the name or description. +
+In the image below there are 55 recommendations for SAP.
+
+.SAP Recommendations
+image::lb1187_M4_SAP.png[link=self, window=blank, width=100%]
+
+Recommendations are commonly created by Red Hat from support cases, best practices guides, or commonly encountered issues.  There are a large variety of Recommendations to help your systems operate to their full potential.
+====
+=====
+
+=====
+.Updates to the list of Recommendations
+[%collapsible]
+====
+
+In Red Hat Lightspeed, at the Hybrid Cloud Console, new recommendations are added weekly or more frequently if needed. +
+
+With Red Hat Lightspeed advisor in Satellite, new recommendations are delivered with container updates. + 
+When you upgrade your Satellite server to the latest release you will need to update the container images to get the latest recommendations and any updates to the advisor engine itself. +
+Container images can be downloaded from the Red Hat Ecosystem Catalog and transferred to Red Hat Satellite OR container images are included with Satellite ISOs.
+
+====
+=====
+
+This completes your task to review the Satellite connected 10.1 host to see if there are any recommendations to improve the reliability, performance, or security of the host. + 
+Continue onto the next module.
