@@ -2,7 +2,7 @@
 
 ## Overview
 
-This lab demonstrates how Red Hat Lightspeed integrates with both the Red Hat Hybrid Cloud Console and Red Hat Satellite 6.18 to provide AI-powered security and compliance management for Red Hat Enterprise Linux environments. Organizations managing a mix of internet-connected and air-gapped RHEL hosts can use Red Hat Lightspeed to identify CVEs, evaluate regulatory compliance, and act on advisor recommendations — all without leaving their existing management toolchain. Participants will use the Hybrid Cloud Console to analyze CVE exposure and run a SCAP compliance scan on an internet-connected RHEL 9.7 host, then switch to Red Hat Satellite to manage advisor recommendations and view vulnerability data on a Satellite-connected RHEL 10.1 host.
+This lab demonstrates how Red Hat Lightspeed integrates with both the Red Hat Hybrid Cloud Console and Red Hat Satellite 6.19 to provide AI-powered security and compliance management for Red Hat Enterprise Linux environments. Organizations managing a mix of internet-connected and air-gapped RHEL hosts can use Red Hat Lightspeed to identify CVEs, evaluate regulatory compliance, and act on advisor recommendations — all without leaving their existing management toolchain. Participants will use the Hybrid Cloud Console to analyze CVE exposure and run a SCAP compliance scan on an internet-connected RHEL 9.7 host, then switch to Red Hat Satellite to manage advisor recommendations and view vulnerability data on a Satellite-connected RHEL 10.1 host.
 
 ## Target Audience
 
@@ -22,7 +22,7 @@ This lab demonstrates how Red Hat Lightspeed integrates with both the Red Hat Hy
 1. Analyze CVE exposure on internet-connected Red Hat Enterprise Linux hosts using the Red Hat Lightspeed vulnerability service at the Hybrid Cloud Console and generate Ansible remediation playbooks.
 2. Evaluate Red Hat Enterprise Linux regulatory compliance against a CIS Level 1 SCAP policy using Red Hat Lightspeed at the Hybrid Cloud Console and identify actionable remediation steps.
 3. Manage advisor recommendations on Satellite-connected Red Hat Enterprise Linux hosts by downloading and triggering remediation playbooks through Red Hat Lightspeed in Satellite.
-4. Explore the vulnerability service in Red Hat Satellite 6.18 to identify and investigate CVEs detected on disconnected Red Hat Enterprise Linux hosts.
+4. Explore the vulnerability service in Red Hat Satellite 6.19 to identify and investigate CVEs detected on disconnected Red Hat Enterprise Linux hosts.
 5. Demonstrate the difference between the cloud-connected Red Hat Lightspeed offering at the Hybrid Cloud Console and the on-premise Red Hat Lightspeed in Satellite deployment model running via Podman containers on the Satellite server.
 
 ## Content Type
@@ -33,7 +33,7 @@ Lab (hands-on)
 
 - Red Hat Lightspeed (via the Hybrid Cloud Console and Red Hat Satellite)
 - Red Hat Hybrid Cloud Console (console.redhat.com)
-- Red Hat Satellite 6.18
+- Red Hat Satellite 6.19
 - Red Hat Enterprise Linux 9.7
 - Red Hat Enterprise Linux 10.1
 - insights-client
@@ -63,19 +63,24 @@ Beginner
 
 ## Environment
 
-**Learner view:** When the lab starts, three virtual machines are pre-provisioned and pre-configured. A RHEL 9.7 host (rhel-{guid}-1) is registered directly to the Hybrid Cloud Console and has existing CVE and compliance data already visible in Red Hat Lightspeed. A RHEL 10.1 host (rhel-{guid}-2) is registered to the Satellite server and has advisor recommendations and vulnerability data populated. A Red Hat Satellite 6.18 server (satellite-{guid}) is fully deployed with Red Hat Lightspeed in Satellite containers running via Podman. Learners interact primarily through two browser-based UIs — the Hybrid Cloud Console at console.redhat.com and the Satellite Web UI — and run two short terminal commands during the lab. A shared Hybrid Cloud Console organization account (rhpd-lightspeed-lb1187) is used across concurrent lab users.
+**Learner view:** When the lab starts, three virtual machines are pre-provisioned and pre-configured. A RHEL 9.7 host (rhel-{guid}-1) is registered directly to the Hybrid Cloud Console and has existing CVE and compliance data already visible in Red Hat Lightspeed. A RHEL 10.1 host (rhel-{guid}-2) is registered to the Satellite server and has advisor recommendations and vulnerability data populated. A Red Hat Satellite 6.19 server (satellite-{guid}) is fully deployed with Red Hat Lightspeed in Satellite containers running via Podman. Learners interact primarily through two browser-based UIs — the Hybrid Cloud Console at console.redhat.com and the Satellite Web UI — and run two short terminal commands during the lab. A shared Hybrid Cloud Console organization account (rhpd-lightspeed-lb1187) is used across concurrent lab users.
 
-**Automation needed:** Yes. Pre-provisioning installs and registers both RHEL hosts (one to the Hybrid Cloud Console, one to Satellite), deploys and configures Red Hat Satellite 6.18, starts the Red Hat Lightspeed in Satellite containers via Podman, and syncs initial insights data so that CVE findings, advisor recommendations, and compliance scan results are populated when the lab begins.
+**Automation needed:** Yes. Pre-provisioning installs and registers both RHEL hosts (one to the Hybrid Cloud Console, one to Satellite), deploys and configures Red Hat Satellite 6.19, starts the Red Hat Lightspeed in Satellite containers via Podman, and syncs initial insights data so that CVE findings, advisor recommendations, and compliance scan results are populated when the lab begins.
 
 ## Infrastructure Requirements
 
-- **Cloud provider:** TBD — confirmed in infrastructure phase
-- **Cluster type:** TBD — confirmed in infrastructure phase
-- **OCP version:** TBD — confirmed in infrastructure phase
-- **Topology:** TBD — confirmed in infrastructure phase
-- **Sizing:** TBD — confirmed in infrastructure phase
-- **Automation approach:** TBD — confirmed in infrastructure phase
-- **AI/MaaS:** TBD — confirmed in infrastructure phase
-- **External services:** TBD — confirmed in infrastructure phase
-- **AAP version:** TBD — confirmed in infrastructure phase
-- **Non-GA products:** TBD — confirmed in infrastructure phase
+- **Cloud provider:** CNV
+- **Platform:** RHEL VMs
+- **Topology:** Per-student
+- **VMs per student (3):**
+  - 1 × RHEL 9.7 host — registered to the Hybrid Cloud Console; packages installed: insights-client, rhc, rhc-worker-script, scap-security-guide-0.1.80-1.el9_7
+  - 1 × RHEL 10.1 host — registered to Red Hat Satellite 6.19; packages served from Satellite content views
+  - 1 × Red Hat Satellite 6.19 server on RHEL 9 (latest) — runs Red Hat Lightspeed in Satellite containers via Podman
+  - Sizing (CPU/RAM/disk): TBD — confirmed in infrastructure phase
+- **Automation approach:** Ansible
+- **AI/MaaS:** None
+- **External services:**
+  - *Student session:* console.redhat.com, access.redhat.com
+  - *Provisioning:* cdn.redhat.com (RHEL packages and Satellite content sync), subscription.rhsm.redhat.com (host registration)
+- **AAP version:** N/A
+- **Non-GA products:** None (all products are GA)

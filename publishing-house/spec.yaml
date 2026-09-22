@@ -25,7 +25,7 @@ spec:
     - "Analyze CVE exposure on internet-connected Red Hat Enterprise Linux hosts using the Red Hat Lightspeed vulnerability service at the Hybrid Cloud Console and generate Ansible remediation playbooks."
     - "Evaluate Red Hat Enterprise Linux regulatory compliance against a CIS Level 1 SCAP policy using Red Hat Lightspeed at the Hybrid Cloud Console and identify actionable remediation steps."
     - "Manage advisor recommendations on Satellite-connected Red Hat Enterprise Linux hosts by downloading and triggering remediation playbooks through Red Hat Lightspeed in Satellite."
-    - "Explore the vulnerability service in Red Hat Satellite 6.18 to identify and investigate CVEs detected on disconnected Red Hat Enterprise Linux hosts."
+    - "Explore the vulnerability service in Red Hat Satellite 6.19 to identify and investigate CVEs detected on disconnected Red Hat Enterprise Linux hosts."
     - "Demonstrate the difference between the cloud-connected Red Hat Lightspeed offering at the Hybrid Cloud Console and the on-premise Red Hat Lightspeed in Satellite deployment model."
   modules:              # [{id, title, duration_min, status}] — id is stable (e.g. module-01)
     - id: module-01
@@ -54,7 +54,7 @@ spec:
       status: not_started
   environment:
     platform: "rhel-vms"               # ocp | rhel-vms — determines which sizing fields apply
-    topology: ""               # shared-cluster | per-student | cnv-pool
+    topology: "per-student"               # shared-cluster | per-student | cnv-pool
     cloud_provider: cnv        # cnv | aws — cnv is default
     max_concurrent_users: null # required if topology = shared-cluster
 
@@ -71,7 +71,28 @@ spec:
 
     # --- VM-specific fields (only when platform = rhel-vms) ---
     # Each entry: {role, count, cpu, ram_gb, disk_gb, os}
-    vms_per_student: []
+    vms_per_student:
+      - role: "rhel-9-7-host"
+        count: 1
+        cpu: null
+        ram_gb: null
+        disk_gb: null
+        os: "RHEL 9.7"
+        notes: "Registered to HCC; installs insights-client, rhc, rhc-worker-script, scap-security-guide-0.1.80-1.el9_7"
+      - role: "rhel-10-1-host"
+        count: 1
+        cpu: null
+        ram_gb: null
+        disk_gb: null
+        os: "RHEL 10.1"
+        notes: "Registered to Satellite 6.19; packages from Satellite content views"
+      - role: "satellite-6-19-server"
+        count: 1
+        cpu: null
+        ram_gb: null
+        disk_gb: null
+        os: "RHEL 9 (latest)"
+        notes: "Runs Red Hat Lightspeed in Satellite containers via Podman"
 
     # --- Common fields (both platforms) ---
     aap_version: ""                    # required if AAP in products
@@ -84,6 +105,8 @@ spec:
     external_services:
       - "console.redhat.com"
       - "access.redhat.com"
+      - "cdn.redhat.com"
+      - "subscription.rhsm.redhat.com"
     gpu_nodes: 0                       # number of GPU nodes (0 = none)
     gpu_type: ""                       # e.g. NVIDIA A100 40GB (required if gpu_nodes > 0)
   duration_hours: 2
@@ -112,14 +135,14 @@ approval_checklist:
   content:
     prerequisites_verifiable: false
     assessment_strategy: ""
-    catalog_gap: ""
+    catalog_gap: "This lab is the only beginner-level item in the RHDP catalog that combines Red Hat Lightspeed across both the Hybrid Cloud Console (for internet-connected hosts) and Red Hat Satellite (for disconnected hosts) in a single scenario. Existing catalog items cover these topics separately and only at intermediate difficulty."
     design_overview: >
       This lab demonstrates Red Hat Lightspeed's dual deployment model — at the Hybrid Cloud Console
       for internet-connected RHEL hosts and on-premise via Red Hat Lightspeed in Satellite for
       disconnected environments. Participants work through a realistic scenario for the fictional
       company Infinicorp, completing four hands-on tasks: identifying and remediating CVEs, evaluating
       SCAP compliance (both via the Hybrid Cloud Console), managing advisor recommendations, and
-      exploring vulnerability detection (both via Red Hat Lightspeed in Satellite 6.18). All
+      exploring vulnerability detection (both via Red Hat Lightspeed in Satellite 6.19). All
       capabilities demonstrated are generally available in their respective products.
     module_summaries:
       - id: module-01
@@ -140,11 +163,11 @@ approval_checklist:
       - id: module-04
         summary: >
           Demonstrates how to view and remediate an advisor recommendation on a disconnected RHEL 10.1
-          host using Red Hat Lightspeed in Satellite 6.18, including triggering a Red Hat-generated
+          host using Red Hat Lightspeed in Satellite 6.19, including triggering a Red Hat-generated
           playbook directly from the Satellite Web UI.
       - id: module-05
         summary: >
-          Explores the generally available vulnerability service inside Red Hat Satellite 6.18 by
+          Explores the generally available vulnerability service inside Red Hat Satellite 6.19 by
           examining CVEs detected on the Satellite-connected RHEL 10.1 host and following a link to
           the Red Hat CVE database for additional context.
       - id: module-06
@@ -169,7 +192,6 @@ approval_checklist:
         url: "https://catalog.demo.redhat.com/catalog?item=zt-rhelbu.zt-insights-vulnerability.prod"
         relevance_score: 58
         why_it_fits: "Beginner-level Hybrid Cloud Console CVE analysis and vulnerability management on RHEL systems, covering a core portion of the requested learning objectives."
-    catalog_gap: "This lab is the only beginner-level item in the RHDP catalog that combines Red Hat Lightspeed across both the Hybrid Cloud Console (for internet-connected hosts) and Red Hat Satellite (for disconnected hosts) in a single scenario. Existing catalog items cover these topics separately and only at intermediate difficulty."
     rejections: []
 
   infra:
