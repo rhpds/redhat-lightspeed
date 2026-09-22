@@ -14,17 +14,40 @@ project:
   showroom_type: "zero_touch"
   intake_type: "migration"
   automation_type: "ansible"
-  description: "redhat-lightspeed"
+  description: "Hands on with Red Hat Lightspeed in Satellite"
   # content_reviewer_email and infra_reviewer_email are assigned by the RHDP team — not set by the author
   jira_ticket: "RHDPCD-2044"
   workflow_id: "45b1c768-d43e-47d7-8b5a-fab445ea8673"
 
 spec:
-  title: ""
-  learning_objectives: []
-  modules: []              # [{id, title, duration_min}] — written by intake Phase 4; id is stable (e.g. module-01)
+  title: "Hands on with Red Hat Lightspeed in Satellite"
+  learning_objectives:
+    - "Analyze CVE exposure on internet-connected Red Hat Enterprise Linux hosts using the Red Hat Lightspeed vulnerability service at the Hybrid Cloud Console and generate Ansible remediation playbooks."
+    - "Evaluate Red Hat Enterprise Linux regulatory compliance against a CIS Level 1 SCAP policy using Red Hat Lightspeed at the Hybrid Cloud Console and identify actionable remediation steps."
+    - "Manage advisor recommendations on Satellite-connected Red Hat Enterprise Linux hosts by downloading and triggering remediation playbooks through Red Hat Lightspeed in Satellite."
+    - "Explore the vulnerability service in Red Hat Satellite 6.18 to identify and investigate CVEs detected on disconnected Red Hat Enterprise Linux hosts."
+    - "Demonstrate the difference between the cloud-connected Red Hat Lightspeed offering at the Hybrid Cloud Console and the on-premise Red Hat Lightspeed in Satellite deployment model."
+  modules:              # [{id, title, duration_min}] — id is stable (e.g. module-01)
+    - id: module-01
+      title: "Welcome to Infinicorp - we have tasks for you!"
+      duration_min: 10
+    - id: module-02
+      title: "Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate and remediate CVEs"
+      duration_min: 35
+    - id: module-03
+      title: "Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate regulatory compliance"
+      duration_min: 30
+    - id: module-04
+      title: "Red Hat Lightspeed Advisor in Satellite"
+      duration_min: 25
+    - id: module-05
+      title: "Red Hat Lightspeed Vulnerability in Red Hat Satellite"
+      duration_min: 10
+    - id: module-06
+      title: "Recap"
+      duration_min: 5
   environment:
-    platform: ""               # ocp | rhel-vms — determines which sizing fields apply
+    platform: "rhel-vms"               # ocp | rhel-vms — determines which sizing fields apply
     topology: ""               # shared-cluster | per-student | cnv-pool
     cloud_provider: cnv        # cnv | aws — cnv is default
     max_concurrent_users: null # required if topology = shared-cluster
@@ -46,17 +69,19 @@ spec:
 
     # --- Common fields (both platforms) ---
     aap_version: ""                    # required if AAP in products
-    ai_requirement: ""                 # maas | gpu | none
+    ai_requirement: "none"             # maas | gpu | none
     ai_model_tier: ""                  # open-source | frontier (if ai_requirement = maas or gpu)
     ai_model_name: ""                  # specific model e.g. granite-3.1-8b
     ai_justification: ""               # required if ai_model_tier = frontier or ai_requirement = gpu
     non_ga_products: []                # list of non-GA products/versions
     non_ga_access_plan: ""             # how access is provided for non-GA products
-    external_services: []              # named external service dependencies e.g. [github.com]
+    external_services:
+      - "console.redhat.com"
+      - "access.redhat.com"
     gpu_nodes: 0                       # number of GPU nodes (0 = none)
     gpu_type: ""                       # e.g. NVIDIA A100 40GB (required if gpu_nodes > 0)
-  duration_hours: null
-  audience: ""               # beginner | intermediate | advanced
+  duration_hours: 2
+  audience: "beginner"               # beginner | intermediate | advanced
 
 development:
   automation:
@@ -79,7 +104,7 @@ tracking:
 approval_checklist:
 
   content:
-    prerequisites_verifiable: null
+    prerequisites_verifiable: false
     assessment_strategy: ""
     catalog_gap: ""
     design_overview: ""

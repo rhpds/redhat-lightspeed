@@ -1,89 +1,81 @@
-# [Project Title]
-
-<!-- This file is the design document for your lab or demo. -->
-<!-- Fill in each section below, or run /rhdp-publishing-house to have the intake skill help. -->
-<!-- Sections marked with [brackets] are placeholders — replace with real content. -->
-<!-- The validation gate checks for all required sections before submission. -->
+# Hands on with Red Hat Lightspeed in Satellite
 
 ## Overview
 
-[2-3 sentences on what this lab or demo is and why it exists. Then a direct description of what participants will do — specific enough that someone reading this section immediately understands the content without interpretation. No flowery language. Example: "Participants will deploy a 3-tier application on OpenShift, configure autoscaling, and troubleshoot a simulated pod failure."]
+This lab demonstrates how Red Hat Lightspeed integrates with both the Red Hat Hybrid Cloud Console and Red Hat Satellite 6.18 to provide AI-powered security and compliance management for Red Hat Enterprise Linux environments. Organizations managing a mix of internet-connected and air-gapped RHEL hosts can use Red Hat Lightspeed to identify CVEs, evaluate regulatory compliance, and act on advisor recommendations — all without leaving their existing management toolchain. Participants will use the Hybrid Cloud Console to analyze CVE exposure and run a SCAP compliance scan on an internet-connected RHEL 9.7 host, then switch to Red Hat Satellite to manage advisor recommendations and view vulnerability data on a Satellite-connected RHEL 10.1 host.
 
 ## Target Audience
 
-- **Role:** [Data scientists, platform engineers, developers, etc.]
-- **Experience level:** [Beginner, intermediate, or advanced]
-- **What they already know:** [Existing skills and knowledge]
-- **What they don't know:** [Skills this lab teaches]
+- **Role:** Linux system administrators and IT security operators responsible for managing Red Hat Enterprise Linux environments
+- **Experience level:** Beginner
+- **What they already know:** Basic web browser navigation, Linux terminal use, general familiarity with CVE terminology and compliance concepts (CIS, DISA STIG), and foundational RHEL system administration
+- **What they don't know:** How to use Red Hat Lightspeed at the Hybrid Cloud Console or Red Hat Lightspeed in Satellite to surface and remediate security findings; how to generate Ansible remediation playbooks from vulnerability and compliance data; the distinction between connected and disconnected Red Hat Lightspeed deployment modes
 
 ## Prerequisites
 
-- [What the learner must know or have completed before starting]
-- [Can the lab validate these automatically? Yes/No — brief explanation]
-
-<!-- If no prerequisites, write "None" -->
+- Basic web browser and Linux terminal use
+- General familiarity with CVE terminology and IT security concepts such as vulnerability severity and compliance frameworks; no scripting knowledge required
+- Cannot be validated automatically — the lab environment is pre-configured, but prior knowledge of CVEs and compliance frameworks cannot be verified programmatically
 
 ## Learning Objectives
 
-1. [Action verb] [specific, measurable outcome]
-2. [Action verb] [specific, measurable outcome]
-3. [Action verb] [specific, measurable outcome]
-
-<!-- Scale to duration: up to 3 objectives per 45 min of content. Start with action verbs: Configure, Deploy, Create, Implement, Troubleshoot, Monitor, Scale. Each should be testable. NOT: Understand, Learn, Know. -->
+1. Analyze CVE exposure on internet-connected Red Hat Enterprise Linux hosts using the Red Hat Lightspeed vulnerability service at the Hybrid Cloud Console and generate Ansible remediation playbooks.
+2. Evaluate Red Hat Enterprise Linux regulatory compliance against a CIS Level 1 SCAP policy using Red Hat Lightspeed at the Hybrid Cloud Console and identify actionable remediation steps.
+3. Manage advisor recommendations on Satellite-connected Red Hat Enterprise Linux hosts by downloading and triggering remediation playbooks through Red Hat Lightspeed in Satellite.
+4. Explore the vulnerability service in Red Hat Satellite 6.18 to identify and investigate CVEs detected on disconnected Red Hat Enterprise Linux hosts.
+5. Demonstrate the difference between the cloud-connected Red Hat Lightspeed offering at the Hybrid Cloud Console and the on-premise Red Hat Lightspeed in Satellite deployment model running via Podman containers on the Satellite server.
 
 ## Content Type
 
-[Lab (hands-on) or Demo (presenter-led)]
+Lab (hands-on)
 
 ## Products & Technologies
 
-- [Official Red Hat product name with version if relevant]
-- [Additional products/technologies]
-
-<!-- Use official names: "Red Hat OpenShift", not "OpenShift". List upstream projects separately. -->
+- Red Hat Lightspeed (via the Hybrid Cloud Console and Red Hat Satellite)
+- Red Hat Hybrid Cloud Console (console.redhat.com)
+- Red Hat Satellite 6.18
+- Red Hat Enterprise Linux 9.7
+- Red Hat Enterprise Linux 10.1
+- insights-client
+- OpenSCAP
+- SCAP Security Guide (SSG)
+- CIS Benchmarks
+- Red Hat Ansible Automation Platform (referenced for playbook execution; not directly exercised in the lab)
+- Podman (hosts Red Hat Lightspeed in Satellite containers on the Satellite server)
 
 ## Module Map
 
 | Module | Title | Duration |
 |--------|-------|----------|
-| 1 | [Module title] | [XX min] |
-| 2 | [Module title] | [XX min] |
-| — | **Total hands-on** | **[X hours]** |
-| — | Intro / presentation | [~XX min] |
-| — | **Total lab** | **[~X hours]** |
-
-<!-- Each module 10-30 min. Total: lab 1-4 hours, demo 15-45 min. Modules should build on each other. -->
+| 1 | Welcome to Infinicorp - we have tasks for you! | 10 min |
+| 2 | Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate and remediate CVEs | 35 min |
+| 3 | Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate regulatory compliance | 30 min |
+| 4 | Red Hat Lightspeed Advisor in Satellite | 25 min |
+| 5 | Red Hat Lightspeed Vulnerability in Red Hat Satellite | 10 min |
+| 6 | Recap | 5 min |
+| — | **Total hands-on (modules 2–5)** | **100 min** |
+| — | Overview + Recap (modules 1, 6) | ~15 min |
+| — | **Total lab** | **~115 min (~2 hours)** |
 
 ## Difficulty Level
 
-[Beginner, Intermediate, or Advanced]
+Beginner
 
 ## Environment
 
-**Learner view:** [What exists when the lab starts — pre-deployed resources, what participants see and interact with. Be specific about cluster details.]
+**Learner view:** When the lab starts, three virtual machines are pre-provisioned and pre-configured. A RHEL 9.7 host (rhel-{guid}-1) is registered directly to the Hybrid Cloud Console and has existing CVE and compliance data already visible in Red Hat Lightspeed. A RHEL 10.1 host (rhel-{guid}-2) is registered to the Satellite server and has advisor recommendations and vulnerability data populated. A Red Hat Satellite 6.18 server (satellite-{guid}) is fully deployed with Red Hat Lightspeed in Satellite containers running via Podman. Learners interact primarily through two browser-based UIs — the Hybrid Cloud Console at console.redhat.com and the Satellite Web UI — and run two short terminal commands during the lab. A shared Hybrid Cloud Console organization account (rhpd-lightspeed-lb1187) is used across concurrent lab users.
 
-**Automation needed:** [Yes/No]
-
-[If yes, list what automation must provision — operators, per-user resources, sample apps, data sets.]
+**Automation needed:** Yes. Pre-provisioning installs and registers both RHEL hosts (one to the Hybrid Cloud Console, one to Satellite), deploys and configures Red Hat Satellite 6.18, starts the Red Hat Lightspeed in Satellite containers via Podman, and syncs initial insights data so that CVE findings, advisor recommendations, and compliance scan results are populated when the lab begins.
 
 ## Infrastructure Requirements
 
-- **Cloud provider:** [CNV (default), AWS, or Troshka (bare-metal/nested virt)]
-- **Cluster type:** [Multinode or SNO (Single Node OpenShift)]
-- **OCP version:** [e.g. 4.20 — minimum 4.20]
-- **Topology:** [Shared cluster, per-student, or CNV pool]
-- **Sizing:** [Node types and counts with resources — e.g., "3 control plane (16 CPU, 64GB RAM), 6 workers (8 CPU, 32GB RAM, 100GB disk)"]
-- **Automation approach:** [Ansible, GitOps (Helm + ArgoCD), or combo]
-- **AI/MaaS:** [None, MaaS (open-source model), MaaS (frontier model), or dedicated GPU — include justification if not "none"]
-- **External services:** [Named services — e.g., github.com, registry.access.redhat.com — or "None"]
-- **AAP version:** [e.g. 2.5 — only if AAP is in products; omit otherwise]
-- **Non-GA products:** [Product name + version, with access plan — or "None (all products are GA)"]
-
-<!-- Not all fields must be known at intake. "TBD, estimating ~X" is fine. -->
-
-## Assessment Strategy (Optional)
-
-<!-- Optional — skip this section for demos or classic labs without verification. -->
-<!-- Relevant for Zero-Touch labs with solve/validate buttons or labs with automated checks. -->
-
-[If applicable: how will we know the learner successfully completed each module? Per module: verification script, solve/validate button, visible result in the UI, or automated check.]
+- **Cloud provider:** TBD — confirmed in infrastructure phase
+- **Cluster type:** TBD — confirmed in infrastructure phase
+- **OCP version:** TBD — confirmed in infrastructure phase
+- **Topology:** TBD — confirmed in infrastructure phase
+- **Sizing:** TBD — confirmed in infrastructure phase
+- **Automation approach:** TBD — confirmed in infrastructure phase
+- **AI/MaaS:** TBD — confirmed in infrastructure phase
+- **External services:** TBD — confirmed in infrastructure phase
+- **AAP version:** TBD — confirmed in infrastructure phase
+- **Non-GA products:** TBD — confirmed in infrastructure phase
