@@ -27,25 +27,31 @@ spec:
     - "Manage advisor recommendations on Satellite-connected Red Hat Enterprise Linux hosts by downloading and triggering remediation playbooks through Red Hat Lightspeed in Satellite."
     - "Explore the vulnerability service in Red Hat Satellite 6.18 to identify and investigate CVEs detected on disconnected Red Hat Enterprise Linux hosts."
     - "Demonstrate the difference between the cloud-connected Red Hat Lightspeed offering at the Hybrid Cloud Console and the on-premise Red Hat Lightspeed in Satellite deployment model."
-  modules:              # [{id, title, duration_min}] — id is stable (e.g. module-01)
+  modules:              # [{id, title, duration_min, status}] — id is stable (e.g. module-01)
     - id: module-01
       title: "Welcome to Infinicorp - we have tasks for you!"
       duration_min: 10
+      status: not_started
     - id: module-02
       title: "Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate and remediate CVEs"
       duration_min: 35
+      status: not_started
     - id: module-03
       title: "Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate regulatory compliance"
       duration_min: 30
+      status: not_started
     - id: module-04
       title: "Red Hat Lightspeed Advisor in Satellite"
       duration_min: 25
+      status: not_started
     - id: module-05
       title: "Red Hat Lightspeed Vulnerability in Red Hat Satellite"
       duration_min: 10
+      status: not_started
     - id: module-06
       title: "Recap"
       duration_min: 5
+      status: not_started
   environment:
     platform: "rhel-vms"               # ocp | rhel-vms — determines which sizing fields apply
     topology: ""               # shared-cluster | per-student | cnv-pool
@@ -107,8 +113,45 @@ approval_checklist:
     prerequisites_verifiable: false
     assessment_strategy: ""
     catalog_gap: ""
-    design_overview: ""
-    module_summaries: []
+    design_overview: >
+      This lab demonstrates Red Hat Lightspeed's dual deployment model — at the Hybrid Cloud Console
+      for internet-connected RHEL hosts and on-premise via Red Hat Lightspeed in Satellite for
+      disconnected environments. Participants work through a realistic scenario for the fictional
+      company Infinicorp, completing four hands-on tasks: identifying and remediating CVEs, evaluating
+      SCAP compliance (both via the Hybrid Cloud Console), managing advisor recommendations, and
+      exploring vulnerability detection (both via Red Hat Lightspeed in Satellite 6.18). All
+      capabilities demonstrated are generally available in their respective products.
+    module_summaries:
+      - id: module-01
+        summary: >
+          Introduces the Infinicorp scenario and the distinction between Red Hat Lightspeed at the
+          Hybrid Cloud Console and on-premise Red Hat Lightspeed in Satellite; establishes the context
+          for the four hands-on tasks.
+      - id: module-02
+        summary: >
+          Guides learners through identifying CVEs on a RHEL 9.7 host using the Red Hat Lightspeed
+          vulnerability service at the Hybrid Cloud Console, generating Ansible remediation playbooks,
+          and producing executive and custom PDF vulnerability reports.
+      - id: module-03
+        summary: >
+          Walks learners through creating a CIS Level 1 SCAP compliance policy, running a compliance
+          scan with insights-client, and reviewing results and remediation steps using Red Hat
+          Lightspeed at the Hybrid Cloud Console.
+      - id: module-04
+        summary: >
+          Demonstrates how to view and remediate an advisor recommendation on a disconnected RHEL 10.1
+          host using Red Hat Lightspeed in Satellite 6.18, including triggering a Red Hat-generated
+          playbook directly from the Satellite Web UI.
+      - id: module-05
+        summary: >
+          Explores the generally available vulnerability service inside Red Hat Satellite 6.18 by
+          examining CVEs detected on the Satellite-connected RHEL 10.1 host and following a link to
+          the Red Hat CVE database for additional context.
+      - id: module-06
+        summary: >
+          Summarizes the four completed tasks and presents a product team overview of the GA status
+          and containerized Podman architecture of Red Hat Lightspeed in Satellite, including the
+          update delivery model.
     rcars_overlap_pct: null
     rcars_top_matches: []
     rejections: []
