@@ -74,23 +74,23 @@ spec:
     vms_per_student:
       - role: "rhel-9-7-host"
         count: 1
-        cpu: null
-        ram_gb: null
-        disk_gb: null
+        cpu: 2
+        ram_gb: 4
+        disk_gb: 20
         os: "RHEL 9.7"
         notes: "Registered to HCC; installs insights-client, rhc, rhc-worker-script, scap-security-guide-0.1.80-1.el9_7"
       - role: "rhel-10-1-host"
         count: 1
-        cpu: null
-        ram_gb: null
-        disk_gb: null
+        cpu: 2
+        ram_gb: 4
+        disk_gb: 20
         os: "RHEL 10.1"
         notes: "Registered to Satellite 6.19; packages from Satellite content views"
       - role: "satellite-6-19-server"
         count: 1
-        cpu: null
-        ram_gb: null
-        disk_gb: null
+        cpu: 4
+        ram_gb: 20
+        disk_gb: 300
         os: "RHEL 9 (latest)"
         notes: "Runs Red Hat Lightspeed in Satellite containers via Podman"
 

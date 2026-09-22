@@ -76,7 +76,7 @@ Beginner
   - 1 × RHEL 9.7 host — registered to the Hybrid Cloud Console; packages installed: insights-client, rhc, rhc-worker-script, scap-security-guide-0.1.80-1.el9_7
   - 1 × RHEL 10.1 host — registered to Red Hat Satellite 6.19; packages served from Satellite content views
   - 1 × Red Hat Satellite 6.19 server on RHEL 9 (latest) — runs Red Hat Lightspeed in Satellite containers via Podman
-  - Sizing (CPU/RAM/disk): TBD — confirmed in infrastructure phase
+  - Sizing: RHEL 9.7 host (2 vCPU, 4GB RAM, 20GB disk), RHEL 10.1 host (2 vCPU, 4GB RAM, 20GB disk), Satellite 6.19 server (4 vCPU, 20GB RAM, 300GB disk)
 - **Automation approach:** Ansible
 - **AI/MaaS:** None
 - **External services:**
@@ -84,3 +84,7 @@ Beginner
   - *Provisioning:* cdn.redhat.com (RHEL packages and Satellite content sync), subscription.rhsm.redhat.com (host registration)
 - **AAP version:** N/A
 - **Non-GA products:** None (all products are GA)
+
+## Assessment Strategy
+
+Trust-based — learners follow guided steps and observe results directly in the Hybrid Cloud Console and Satellite Web UI. Completion of each module is verified visually (CVE lists populated, compliance reports generated, recommendations displayed and remediated). No automated verification scripts are required.
