@@ -152,8 +152,24 @@ approval_checklist:
           Summarizes the four completed tasks and presents a product team overview of the GA status
           and containerized Podman architecture of Red Hat Lightspeed in Satellite, including the
           update delivery model.
-    rcars_overlap_pct: null
-    rcars_top_matches: []
+    rcars_overlap_pct: 77
+    rcars_top_matches:
+      - title: "Red Hat Satellite Compliance"
+        ci_name: "zt-rhelbu.zt-satellite-compliance.prod"
+        url: "https://catalog.demo.redhat.com/catalog?item=zt-rhelbu.zt-satellite-compliance.prod"
+        relevance_score: 77
+        why_it_fits: "Covers OpenSCAP compliance scanning and remediation within Red Hat Satellite against RHEL hosts, aligning with the compliance module in this lab."
+      - title: "Red Hat Satellite Proactive Remediation"
+        ci_name: "zt-rhelbu.zt-satellite-lightspeed-ansible.prod"
+        url: "https://catalog.demo.redhat.com/catalog?item=zt-rhelbu.zt-satellite-lightspeed-ansible.prod"
+        relevance_score: 70
+        why_it_fits: "Covers Red Hat Satellite's vulnerability dashboard and CVE detection across RHEL hosts, touching several of the same topic areas."
+      - title: "Remediating vulnerabilities with Red Hat Insights Vulnerability"
+        ci_name: "zt-rhelbu.zt-insights-vulnerability.prod"
+        url: "https://catalog.demo.redhat.com/catalog?item=zt-rhelbu.zt-insights-vulnerability.prod"
+        relevance_score: 58
+        why_it_fits: "Beginner-level Hybrid Cloud Console CVE analysis and vulnerability management on RHEL systems, covering a core portion of the requested learning objectives."
+    catalog_gap: "This lab is the only beginner-level item in the RHDP catalog that combines Red Hat Lightspeed across both the Hybrid Cloud Console (for internet-connected hosts) and Red Hat Satellite (for disconnected hosts) in a single scenario. Existing catalog items cover these topics separately and only at intermediate difficulty."
     rejections: []
 
   infra:
