@@ -20,16 +20,15 @@ During the course of this lab, the Red Hat Lightspeed and Satellite teams wanted
 
 In modules 2 (Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate and remediate CVEs) and 3 (Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate regulatory compliance) we highlighted services and capabilities of Red Hat Lightspeed on the Hybrid Cloud Console.   
 
-These two services are not generally available as part of the Red Hat Lightspeed in Satellite capabilities, but they are services that are in technology preview (vulnerability) or are being considered for inclusion for a future release (compliance).  +
+The vulnerability service is now generally available as part of Red Hat Lightspeed in Satellite in Red Hat Satellite 6.19. The compliance service is being considered for inclusion in a future release. +
 The Red Hat Lightspeed team wanted you to get a feel for the capabilities and how they work.
 
 In module 4 (Advisor recommendations in Satellite) you experienced the Red Hat Lightspeed advisor capability inside of Red Hat Satellite. + 
-Advisor has been available in Satellite since approximately Satellite 6.4, but with Lightspeed in Satellite this capability is disconnected and no longer requires a connection to the internet. + 
+Advisor has been available in Satellite since approximately Satellite 6.4, but with Red Hat Lightspeed in Satellite this capability is disconnected and no longer requires a connection to the internet. + 
 The user interface for Red Hat Lightspeed in Satellite is also refreshed and looks and feels more like what is on the Hybrid Cloud Console. 
 
-In module 5 you experienced the technology preview vulnerability service. + 
-This has limited capabilities today, but you got to explore what this may look like in the future in module 2. + 
-Remediation is notably missing while in technology preview, but you can get a feel for where we are going with this service.
+In module 5 you experienced the generally available vulnerability service in Red Hat Satellite 6.19. +
+This service enables on-premise CVE identification for disconnected RHEL hosts — expanding on what you explored via the Hybrid Cloud Console in module 2.
 
 Red Hat Lightspeed in Satellite consists of a series of podman containers. + 
 These containers are included with the Satellite ISO image or can be downloaded from the image registry.  +

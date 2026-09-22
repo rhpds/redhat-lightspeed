@@ -28,7 +28,7 @@ This module introduces the fictional company Infinicorp and establishes the scen
 1. Read the Infinicorp scenario introduction describing the company's hybrid RHEL environment.
 2. Review the list of four tasks the security team needs to complete.
 3. Read the explanation of Red Hat Lightspeed at the Hybrid Cloud Console (console.redhat.com) — the cloud-connected service.
-4. Read the explanation of Red Hat Lightspeed in Satellite — the on-premise container-based service running via Podman on the Satellite 6.18 server.
+4. Read the explanation of Red Hat Lightspeed in Satellite — the on-premise container-based service running via Podman on the Satellite 6.19 server.
 5. Review the connectivity diagram showing the two host types: rhel-{guid}-1 (connected to the Hybrid Cloud Console) and rhel-{guid}-2 (connected to the Satellite server).
 6. Read the data collection and security information section covering what insights-client data is shared with Red Hat Lightspeed.
 7. Note the shared lab organization account (rhpd-lightspeed-lb1187) — learners will see data from the shared account during Hybrid Cloud Console modules.

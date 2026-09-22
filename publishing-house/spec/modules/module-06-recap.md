@@ -31,14 +31,14 @@ This module closes the lab by summarizing the four tasks Infinicorp's security t
    - Task 4: Explored vulnerability detection for the disconnected RHEL 10.1 host using Red Hat Lightspeed in Satellite.
 2. Read the product team commentary explaining:
    - The containerized architecture of Red Hat Lightspeed in Satellite (Podman containers running on the Satellite server).
-   - The generally available status of both the advisor and vulnerability capabilities in Red Hat Lightspeed in Satellite 6.18.
+   - The generally available status of both the advisor and vulnerability capabilities in Red Hat Lightspeed in Satellite 6.19.
    - How Red Hat Lightspeed in Satellite receives updates: tied to Satellite ISO releases and container image updates.
 3. Note any next steps or additional resources linked from the recap page (for example, links to product documentation or Red Hat blog posts).
 
 ### Key Takeaways
 
 - Red Hat Lightspeed in Satellite extends the capabilities of the Hybrid Cloud Console to disconnected RHEL environments through a containerized on-premise deployment
-- Both the advisor service and the vulnerability service in Red Hat Lightspeed in Satellite are generally available in Satellite 6.18
+- Both the advisor service and the vulnerability service in Red Hat Lightspeed in Satellite are generally available in Satellite 6.19
 - Updates to Red Hat Lightspeed in Satellite are delivered through the standard Satellite ISO and container image release cycle, not through a separate update channel
 - Red Hat Lightspeed covers the full security management loop: detect CVEs and compliance failures, generate remediation playbooks, and act on advisor recommendations — across both connected and disconnected environments
 

@@ -33,7 +33,7 @@ We also need to make sure our newest versions of our Satellite connected systems
 For testing purposes, in your lab environment we have already provided for you: +
 
 * In your connected environment a RHEL 9.7 host that is directly connected to Red Hat Lightspeed at the Hybrid Cloud Console
-* In your disconnected environment, a pre-configured Red Hat Satellite 6.18 which has one Red Hat Enterprise Linux (RHEL) 10.1 host registered.  (Note: for the testing environment only, the Satellite does have a route to the internet.  This is not the case in production.)
+* In your disconnected environment, a pre-configured Red Hat Satellite 6.19 which has one Red Hat Enterprise Linux (RHEL) 10.1 host registered.  (Note: for the testing environment only, the Satellite does have a route to the internet.  This is not the case in production.)
 
 .Testing Environment
 image::lb1187_M1_Labinfra.png[link=self, window=blank, width=100%]
@@ -90,7 +90,7 @@ This means hosts connected to the Satellite using Red Hat Lightspeed in Satellit
 The Red Hat Lightspeed in Satellite capability includes:
 
 * Red Hat Lightspeed advisor service, which provides configuration analysis for your RHEL hosts including best practices, identifying misconfigurations, workload optimization, and performance recommendations from Red Hat’s years of expertise supporting our customers. +
-* https://access.redhat.com/support/offerings/techpreview[Technology Preview^] feature: Red Hat Lightspeed vulnerability service which helps you to identify and prioritize which Common Vulnerabilities and Exposures (CVE) to fix. Since this feature is in technology preview it does not provide any remediation capabilities unlike the connected experience.  +
+* Red Hat Lightspeed vulnerability service, which helps you to identify and prioritize which Common Vulnerabilities and Exposures (CVE) to fix. This capability is generally available in Red Hat Satellite 6.19. +
 
 Other services and capabilities may be added in future releases, but feature parity with the Red Hat Lightspeed experience at the https://console.redhat.com/[Red Hat Hybrid Cloud Console^] should not be expected.
 Red Hat Lightspeed in Satellite does not send any data outside of the Satellite for the processing of Red Hat Lightspeed data.  +

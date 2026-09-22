@@ -6,12 +6,10 @@ Infinicorp has a disconnected environment that leverages Red Hat Satellite for R
 Due to the sensitive nature of the information processed in this environment, no internet connectivity is allowed.  Since Red Hat Lightspeed primarily uses the Hybrid Cloud Console for analysis, historically the use of these types of tools hasn’t been possible since they require a connection to the internet.  +
 Now that Red Hat has released Red Hat Lightspeed in Satellite, some of the Red Hat Lightspeed capabilities are now available for disconnected environments. +
 
-The Red Hat Lightspeed advisor in Satellite feature is now generally available in Satellite 6.18 and offers the advisor capability as well as remediation. +
-The Red Hat Lightspeed vulnerability service is released in technology preview status and provides vulnerability scanning.
+The Red Hat Lightspeed advisor in Satellite feature is now generally available in Satellite 6.19 and offers the advisor capability as well as remediation. +
+The Red Hat Lightspeed vulnerability service is generally available in Red Hat Satellite 6.19 and provides vulnerability scanning.
 
-Please refer to this support document for more information about https://access.redhat.com/support/offerings/techpreview[Technology Preview Features - Scope of Support^].
-
-Infinicorp has provided you with a preconfigured Red Hat Satellite 6.18 server and a RHEL 10.1 host to evaluate the capabilities of Red Hat Lightspeed in Satellite.  In the interest of time, all set up tasks for the Satellite server have already been completed for you.
+Infinicorp has provided you with a preconfigured Red Hat Satellite 6.19 server and a RHEL 10.1 host to evaluate the capabilities of Red Hat Lightspeed in Satellite.  In the interest of time, all set up tasks for the Satellite server have already been completed for you.
 
 In this environment your first task is to review the Satellite connected 10.1 host to see if there are any recommendations to improve the reliability, performance, or security of the host. 
 

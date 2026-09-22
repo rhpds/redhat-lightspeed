@@ -2,7 +2,7 @@
 
 ### Brief Overview
 
-This module demonstrates the advisor service within Red Hat Lightspeed in Satellite, using a disconnected RHEL 10.1 host managed through Red Hat Satellite 6.18. Learners run insights-client on the RHEL 10.1 host to sync advisor data with Satellite, log into the Satellite Web UI, locate an OpenSSH ClientAlive recommendation, download the Red Hat-generated remediation playbook, and trigger live remediation directly from the Satellite UI. This module shows how organizations can act on Red Hat Lightspeed recommendations without requiring a direct internet connection from the managed host.
+This module demonstrates the advisor service within Red Hat Lightspeed in Satellite, using a disconnected RHEL 10.1 host managed through Red Hat Satellite 6.19. Learners run insights-client on the RHEL 10.1 host to sync advisor data with Satellite, log into the Satellite Web UI, locate an OpenSSH ClientAlive recommendation, download the Red Hat-generated remediation playbook, and trigger live remediation directly from the Satellite UI. This module shows how organizations can act on Red Hat Lightspeed recommendations without requiring a direct internet connection from the managed host.
 
 ### Audience and Time
 
@@ -14,7 +14,7 @@ This module demonstrates the advisor service within Red Hat Lightspeed in Satell
 
 - Manage advisor recommendations on Satellite-connected Red Hat Enterprise Linux hosts using Red Hat Lightspeed in Satellite
 - Demonstrate how Red Hat Lightspeed in Satellite enables remediation for disconnected RHEL hosts without direct Hybrid Cloud Console access
-- Verify that a remediation playbook triggered from Red Hat Satellite 6.18 resolves the advisor recommendation
+- Verify that a remediation playbook triggered from Red Hat Satellite 6.19 resolves the advisor recommendation
 
 ### Lab Structure
 
@@ -32,7 +32,7 @@ This module demonstrates the advisor service within Red Hat Lightspeed in Satell
 2. Run `insights-client` to sync the latest advisor data with the Red Hat Satellite server.
 3. Open a browser and navigate to the Satellite Web UI (satellite-{guid}).
 4. Log in with the Satellite administrator credentials provided in the lab environment.
-5. Navigate to the Red Hat Lightspeed section within the Satellite Web UI (Hosts > Red Hat Lightspeed > Recommendations or equivalent navigation path in Satellite 6.18).
+5. Navigate to the Red Hat Lightspeed section within the Satellite Web UI (Hosts > Red Hat Lightspeed > Recommendations or equivalent navigation path in Satellite 6.19).
 6. Locate the RHEL 10.1 host (rhel-{guid}-2) in the host list.
 7. Review the list of advisor recommendations for this host.
 8. Select the OpenSSH ClientAlive settings recommendation and read the description, risk, and suggested fix.
@@ -48,11 +48,11 @@ This module demonstrates the advisor service within Red Hat Lightspeed in Satell
 - Red Hat Lightspeed in Satellite enables advisor recommendations for RHEL hosts that do not have direct internet access — insights data flows through the Satellite server
 - A single `insights-client` run on the RHEL 10.1 host syncs advisor data to Satellite; no outbound connection from the host to the Hybrid Cloud Console is required
 - Remediation playbooks for advisor recommendations are provided by Red Hat and can be executed directly from the Satellite Web UI
-- The advisor service in Red Hat Lightspeed in Satellite is generally available in Satellite 6.18
+- The advisor service in Red Hat Lightspeed in Satellite is generally available in Satellite 6.19
 
 ### Infrastructure Notes
 
 - The RHEL 10.1 host (rhel-{guid}-2) must be registered to Satellite (not to the Hybrid Cloud Console directly) and must have insights-client configured to use the Satellite as its upload target
-- Red Hat Satellite 6.18 must have Red Hat Lightspeed in Satellite containers running via Podman and configured before lab start
+- Red Hat Satellite 6.19 must have Red Hat Lightspeed in Satellite containers running via Podman and configured before lab start
 - The OpenSSH ClientAlive recommendation must be present on the RHEL 10.1 host at lab start — provisioning automation should ensure this is reproducible
 - Playbook execution from Satellite requires the Satellite to have job execution (Remote Execution) configured and the RHEL 10.1 host reachable
