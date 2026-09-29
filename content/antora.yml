@@ -4,6 +4,6 @@ version: master
 
 asciidoc:
   attributes:
-    lab_name: "Red Hat Lightspeed on prem"
+    lab_name: "Hands on with Red Hat Lightspeed in Satellite"
     release-version: master
     page-pagination: true
