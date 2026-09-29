@@ -4,13 +4,13 @@ antora:
   dir: www
   modules:
     - name: "module-01"
-      label: "Overview"
+      label: "Welcome to Infinicorp"
       solveButton: false
     - name: "module-02"
-      label: "CVEs"
+      label: "Evaluate and remediate CVEs"
       solveButton: false
     - name: "module-03"
-      label: "Compliance"
+      label: "Evaluate regulatory compliance"
       solveButton: false
     - name: "module-04"
       label: "Lightspeed Advisor in Satellite"
@@ -19,7 +19,7 @@ antora:
       label: "Lightspeed Vulnerability in Satellite"
       solveButton: false
     - name: "module-06"
-      label: "Conclusion"
+      label: "Recap"
 
 tabs:
   - name: "Satellite Web UI"

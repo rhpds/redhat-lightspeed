@@ -1,8 +1,8 @@
 ---
 site:
-  title: "Hands on with Lightspeed in Satellite"
-  url: https://github.com/rhpds/showroom_template_zero
-  start_page: modules::01-introduction.adoc
+  title: "Hands on with Red Hat Lightspeed in Satellite"
+  url: https://github.com/rhpds/redhat-lightspeed
+  start_page: modules::index.adoc
 
 content:
   sources:
