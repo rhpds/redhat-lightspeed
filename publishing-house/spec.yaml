@@ -27,50 +27,55 @@ spec:
     - "Manage advisor recommendations on Satellite-connected Red Hat Enterprise Linux hosts by downloading and triggering remediation playbooks through Red Hat Lightspeed in Satellite."
     - "Explore the vulnerability service in Red Hat Satellite 6.19 to identify and investigate CVEs detected on disconnected Red Hat Enterprise Linux hosts."
     - "Demonstrate the difference between the cloud-connected Red Hat Lightspeed offering at the Hybrid Cloud Console and the on-premise Red Hat Lightspeed in Satellite deployment model."
-  modules:              # [{id, title, duration_min, status}] — id is stable (e.g. module-01)
+  modules:
     - id: module-01
       title: "Welcome to Infinicorp - we have tasks for you!"
       duration_min: 10
       status: not_started
+      slug: module-01-overview
     - id: module-02
       title: "Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate and remediate CVEs"
       duration_min: 35
       status: not_started
+      slug: module-02-hcc-vulnerabilities
     - id: module-03
       title: "Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate regulatory compliance"
       duration_min: 30
       status: not_started
+      slug: module-03-hcc-compliance
     - id: module-04
       title: "Red Hat Lightspeed Advisor in Satellite"
       duration_min: 25
       status: not_started
+      slug: module-04-satellite-advisor
     - id: module-05
       title: "Red Hat Lightspeed Vulnerability in Red Hat Satellite"
       duration_min: 10
       status: not_started
+      slug: module-05-satellite-vulnerability
     - id: module-06
       title: "Recap"
       duration_min: 5
       status: not_started
+      slug: module-06-recap
   environment:
-    platform: "rhel-vms"               # ocp | rhel-vms — determines which sizing fields apply
-    topology: "per-student"               # shared-cluster | per-student | cnv-pool
-    cloud_provider: cnv        # cnv | aws — cnv is default
-    max_concurrent_users: null # required if topology = shared-cluster
+    platform: "rhel-vms"
+    topology: "per-student"
+    cloud_provider: cnv
+    max_concurrent_users: null
 
     # --- OCP-specific fields (only when platform = ocp) ---
-    ocp_version: ""                    # e.g. 4.20 — minimum 4.20; leave empty for rhel-vms
-    cluster_type: ""                   # sno | multinode — only for platform = ocp
-    control_plane_instance_count: null # 1 if sno, 3 if multinode
-    control_plane_cpu: null            # 32 if sno, 16 if multinode
-    control_plane_ram_gb: null         # 128 if sno, 64 if multinode
-    worker_count: null                 # number of OCP worker nodes
-    worker_cpu: null                   # vCPU per worker
-    worker_ram_gb: null                # RAM per worker in GB
-    worker_disk_gb: null               # disk per worker in GB
+    ocp_version: ""
+    cluster_type: ""
+    control_plane_instance_count: null
+    control_plane_cpu: null
+    control_plane_ram_gb: null
+    worker_count: null
+    worker_cpu: null
+    worker_ram_gb: null
+    worker_disk_gb: null
 
     # --- VM-specific fields (only when platform = rhel-vms) ---
-    # Each entry: {role, count, cpu, ram_gb, disk_gb, os}
     vms_per_student:
       - role: "rhel-9-7-host"
         count: 1
@@ -95,22 +100,22 @@ spec:
         notes: "Runs Red Hat Lightspeed in Satellite containers via Podman"
 
     # --- Common fields (both platforms) ---
-    aap_version: ""                    # required if AAP in products
-    ai_requirement: "none"             # maas | gpu | none
-    ai_model_tier: ""                  # open-source | frontier (if ai_requirement = maas or gpu)
-    ai_model_name: ""                  # specific model e.g. granite-3.1-8b
-    ai_justification: ""               # required if ai_model_tier = frontier or ai_requirement = gpu
-    non_ga_products: []                # list of non-GA products/versions
-    non_ga_access_plan: ""             # how access is provided for non-GA products
+    aap_version: ""
+    ai_requirement: "none"
+    ai_model_tier: ""
+    ai_model_name: ""
+    ai_justification: ""
+    non_ga_products: []
+    non_ga_access_plan: ""
     external_services:
       - "console.redhat.com"
       - "access.redhat.com"
       - "cdn.redhat.com"
       - "subscription.rhsm.redhat.com"
-    gpu_nodes: 0                       # number of GPU nodes (0 = none)
-    gpu_type: ""                       # e.g. NVIDIA A100 40GB (required if gpu_nodes > 0)
+    gpu_nodes: 0
+    gpu_type: ""
   duration_hours: 2
-  audience: "beginner"               # beginner | intermediate | advanced
+  audience: "beginner"
 
 development:
   automation:
