@@ -3,22 +3,22 @@ antora:
   name: modules
   dir: www
   modules:
-    - name: "module-01"
+    - name: "module-01-overview"
       label: "Welcome to Infinicorp"
       solveButton: false
-    - name: "module-02"
+    - name: "module-02-hcc-vulnerabilities"
       label: "Evaluate and remediate CVEs"
       solveButton: false
-    - name: "module-03"
+    - name: "module-03-hcc-compliance"
       label: "Evaluate regulatory compliance"
       solveButton: false
-    - name: "module-04"
+    - name: "module-04-satellite-advisor"
       label: "Lightspeed Advisor in Satellite"
       solveButton: false
-    - name: "module-05"
+    - name: "module-05-satellite-vulnerability"
       label: "Lightspeed Vulnerability in Satellite"
       solveButton: false
-    - name: "module-06"
+    - name: "module-06-recap"
       label: "Recap"
 
 tabs:
