@@ -25,13 +25,13 @@ NOTE: If you are a regular user of the Hybrid Cloud Console it is recommended to
 User:
 [source,sh,role=execute]
 ----
- rhpd-lightspeed-lb1187
+rhpd-rhlightspeed-lb1141
 ----
 
 Password:
 [source,sh,role=execute]
 ----
-rhdp*lightspeed2026!
+rhdp*Lightspeed-2027!
 ----
 
 (Move onto the next section, but don’t leave this page.) +
@@ -47,7 +47,7 @@ rhdp*lightspeed2026!
 On the main page locate the `Red Hat Enterprise Linux` tile in the upper left and click https://console.redhat.com/insights/[RHEL^]. +
 
 .Hybrid Cloud Console Home Page
-image::lb1187_M2_HCCHomePage.png[link=self, window=blank, width=100%]
+image::LB1141_M02_01.png[link=self, window=blank, width=100%]
 
 
 
@@ -61,7 +61,7 @@ This page is showing you the CVEs of all systems registered to Red Hat Lightspee
 The summary bar at the top of the page helps you focus on the most impactful issues in your environment.  If you have a high number of CVEs in your environment, this summary bar highlights the biggest risks that you should likely focus on addressing first.  Clicking on any of the numbers in the summary bar will apply filters that will show you these CVEs.
 
 .Vulnerability Summary Bar
-image::Vuln_SummaryBar.png[link=self, window=blank, width=100%]
+image::LB1141_M02_02.png[link=self, window=blank, width=100%]
 
 
 NOTE: The numbers you see may not match what is shown in the screenshot above.  That is expected.
@@ -77,7 +77,7 @@ Here is an explanation of the items in the summary bar: +
 The default view also applies a number of filters.
 
 .Vulnerability Filters
-image::Vuln_DefaultFilters.png[link=self, window=blank, width=100%]
+image::LB1141_M02_03.png[link=self, window=blank, width=100%]
 
 
 * The first filter chips show you only CVEs that affect `1 or more systems` in your infrastructure.  This could be a Conventional (RPM-DNF based) system or an Immutable (OSTree based) system.  
@@ -102,7 +102,7 @@ SecOps has asked for a report of how many systems are impacted by `CVE-2025-4345
 In the previous section you left off where you were viewing the default filters.
 
 .Vulnerability Filters
-image::Vuln_DefaultFilters.png[link=self, window=blank, width=100%]
+image::LB1141_M02_03.png[link=self, window=blank, width=100%]
 
 From the vulnerability page the default filter is `CVE` (located to the right of the empty checkbox in the image above).  You can type the CVE number in the search box OR even a common search term that might be present in the CVE description like `GTK`.   +
 
@@ -115,7 +115,7 @@ Notice that a new filter chip has been added for `Search term: 43458` +
 4. Click on the CVE ID for https://console.redhat.com/insights/vulnerability/cves/CVE-2025-43458[CVE-2025-43458^]  .
 
 .CVE-2025-43458 Summary
-image::lb1187_M2_cve43458.png[link=self, window=blank, width=100%]
+image::LB1141_M02_04.png[link=self, window=blank, width=100%]
 
 
 In the upper right of the page you will see a `Business risk` and a `Status`.  In the screenshot above they are shown as `Not defined` and `Not reviewed` respectively.  
@@ -162,9 +162,7 @@ You can also add a justification note to indicate any details about the status t
 9. Locate the export button (just to the right of the `Plan remediation` button).  It looks like this:
 
 .Export Button Location
-image::Insights_Export_Botton_and_Bar.png[ExportButton,85%,85%] 
-
-
+image::LB1141_M02_05.png[ExportButton,85%,85%] 
 
 [start=10]
 10. Click the export button which will give you the option to export this list into CSV or JSON formats. +
@@ -276,7 +274,7 @@ Locate the CVE filter and click it - this will provide you a list of items you c
 When selected this should look like the image below.
 
 .CVE Severity Filter
-image::lb1187_M2_CVESeverity.png[link=self, window=blank, width=100%]
+image::LB1141_M02_06.png[link=self, window=blank, width=100%]
 
 NOTE: you may need to click outside of the filter box to get it to close.
 
@@ -287,10 +285,10 @@ Red Hat Lightspeed can show you this information as well.
 [start=8]
 8. Take note of the number of CVEs listed for the host.  These are shown in the upper right side of the list of CVEs. +
 
-In the image below there are 14 critical or important CVEs with errata on the host in the image - the number you see may differ.
+In the image below there are 481 critical or important CVEs with errata on the host in the image - the number you see may differ.
 
 .Critical or Important CVEs with errata
-image::lb1187_M2_CVE_w_errata.png[lb1187_M2_CVE_w_errata,85%,85%] 
+image::LB1141_M02_07.png[lb1187_M2_CVE_w_errata,85%,85%] 
 
 
 The GTK issue we identified earlier is responsible for all of these CVEs, so addressing that will handle the bulk of the issues.  +
@@ -305,10 +303,10 @@ This will show you all CVEs in the database that affect this system - with and w
 
 10. Look again at the number of CVEs - the number is significantly larger!
 
-In the image below there are 55 critical or important CVEs when looking at the full picture - these are CVEs with and without errata.  Having this information gives us a full view of all of the issues that affect your RHEL hosts - the ones you can fix as well as the ones you can’t.
+In the image below there are 743 critical or important CVEs when looking at the full picture - these are CVEs with and without errata.  Having this information gives us a full view of all of the issues that affect your RHEL hosts - the ones you can fix as well as the ones you can’t.
 
 .Critical or Important CVEs with or without errata
-image::lb1187_M2_CVE_wo_errata.png[lb1187_M2_CVE_wo_errata,85%,85%] 
+image::LB1141_M02_07.5.png[lb1187_M2_CVE_wo_errata,85%,85%] 
 
 
 The advisory column will tell you if the CVE has an advisory available to resolve the CVE.  
@@ -318,7 +316,7 @@ The advisory column will tell you if the CVE has an advisory available to resolv
 Again - you can get a list of all of the CVEs that impact a specific system very quickly.
 
 .Export button
-image::Insights_Export_Button.png[Insights_Export_Button,85%,85%]
+image::Export.png[Insights_Export_Button]
 
 With this list of CVEs exported you now have a full picture of the Critical and Important CVEs that affect this RHEL 9.7 system and you can send that onto the SecOps team for their review.  
 
@@ -364,7 +362,7 @@ In the past you have been asked to provide your SecOps team with a list of all v
 This opens a window where you can identify what you want the report to contain. +
 
 .Report by CVEs Wizard
-image::lb1187_M2_CVEReport.png[link=self, window=blank, width=100%]
+image::LB1141_M02_08.png[link=self, window=blank, width=100%]
 
 [start=2]
 2. Complete the report wizard +
