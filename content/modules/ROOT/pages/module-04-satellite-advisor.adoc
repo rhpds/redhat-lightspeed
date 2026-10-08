@@ -4,10 +4,11 @@
 
 Infinicorp has a disconnected environment that leverages Red Hat Satellite for Red Hat Enterprise Linux (RHEL) management. +
 Due to the sensitive nature of the information processed in this environment, no internet connectivity is allowed.  Since Red Hat Lightspeed primarily uses the Hybrid Cloud Console for analysis, historically the use of these types of tools hasn’t been possible since they require a connection to the internet.  +
-Now that Red Hat has released Red Hat Lightspeed in Satellite, some of the Red Hat Lightspeed capabilities are now available for disconnected environments. +
 
-The Red Hat Lightspeed advisor in Satellite feature is now generally available in Satellite 6.19 and offers the advisor capability as well as remediation. +
-The Red Hat Lightspeed vulnerability service is generally available in Red Hat Satellite 6.19 and provides vulnerability scanning.
+Today Red Hat has a self-managed version - Red Hat Lightspeed in Satellite.
+This means that some of the Red Hat Lightspeed capabilities are now available for environments that are disconnected or that may not allow data to be transferred outside of the network for any reason. +
+
+The Red Hat Lightspeed in Satellite feature is now generally available and offers the advisor and vulnerability services in this self-managed deployment model.
 
 Infinicorp has provided you with a preconfigured Red Hat Satellite 6.19 server and a RHEL 10.1 host to evaluate the capabilities of Red Hat Lightspeed in Satellite.  In the interest of time, all set up tasks for the Satellite server have already been completed for you.
 
@@ -15,7 +16,7 @@ In this environment your first task is to review the Satellite connected 10.1 ho
 
 == Host recommendations with Red Hat Lightspeed in Satellite - 
 
-First, we’ll log into the Red Hat Satellite Web User Interface (UI). Satellite has been preinstalled and installation and configuration of Lightspeed in Satellite is out of scope for this lab.
+Satellite has been preinstalled and installation and configuration of Lightspeed in Satellite is out of scope for this lab.
 
 Expand a section below to complete the tasks in that section.  
 Please complete each section in order.
@@ -33,7 +34,7 @@ NOTE: Though the name of Insights changed to Red Hat Lightspeed, packages, comma
 1. From your showroom environment, click the tab labeled `rhel-{guid}-2 terminal`.
 
 .rhel-{guid}-2 terminal tab
-image::host2-terminal.png[../assets/host2-terminal-tab]
+image::LB1141_M04_000.png[link=self, window=blank, width=100%]
 
 [start=2]
 2. Run the following command:
@@ -46,7 +47,7 @@ insights-client
 Running the insights-client command will collect and upload data to Satellite which will run the advisor analysis locally.
 
 .Output of insights-client command
-image::self-managed_insights-client_output.png[link=self, window=blank, width=100%]
+image::LB1141_M04_00.png[link=self, window=blank, width=100%]
 
 NOTE: The insights-client will still include output information as if it is connected to console.redhat.com. No information is actually sent to the Hybrid Cloud Console.
 
@@ -62,7 +63,7 @@ Do not move onto the next step until the operation is complete and you are retur
 . Click on the tab labelled Satellite Web UI as shown in the image below.
 
 .Satellite Web UI tab
-image::satellite-webui-tab.png[link=self, window=blank, width=100%]
+image::LB1141_M04_01-00.png[link=self, window=blank, width=100%]
 
 [start=2]
 . Log in credentials
@@ -84,12 +85,12 @@ bc31c9a6-9ff0-11ec-9587-00155d1b0702
 Now click `+Log In+`.
 
 .Login menu
-image::lb1187_M4_SatLogonPage.png[../assets/webuilogin]
+image::LB1141_M04_01.png[link=self, window=blank, width=100%]
 
 You will be taken to the main dashboard.
 
 .Satellite WebGUI dashboard
-image::main-menu.png[../assets/main-menu]
+image::LB1141_M04_02.png[../assets/main-menu]
 
 [start=3]
 . Once logged in, on the left hand navigation bar expand the `Red Hat Lightspeed` menu. +
@@ -97,7 +98,7 @@ image::main-menu.png[../assets/main-menu]
 You will see `Recommendations` and `Vulnerability`.
 
 .Red Hat Lightspeed in Satellite Menu
-image::Sat_Insights_Connected_Menu.png[../assets/Sat_Insights_Connected_Menu]
+image::Sat_Insights_Connected_Menu.png[]
 
 [start=4]
 . Select `Recommendations`.
@@ -148,13 +149,13 @@ Since the type is `Playbook` this means that there is an Ansible playbook availa
 To get more details you will need to select the issue.
 
 .Recommendation page
-image::decreased-security-advisor.png[]
+image::LB1141_M04_03.png[link=self, window=blank, width=100%]
 
 [start=2]
 . Click the issue. You'll be taken to a new page containing the details of the issue.
 
 .OpenSSH Recommendation details page
-image::decreased-security-advisor-details.png[]
+image::decreased-security-advisor-details.png[link=self, window=blank, width=100%]
 
 The details page gives you high level information about the risk that was found and links to a Knowledgebase article if you need to get more information about the issue.  +
 
@@ -173,7 +174,7 @@ You should go ahead and create a playbook that you can evaluate and send to the 
 . Select the hosts that are affected by the issue by clicking on the checkbox to the left of the host name.
 
 .Select affected systems
-image::selected-hosts.png[]
+image::selected-hosts.png[link=self, window=blank, width=100%]
 
 [start=4]
 . With a host selected, both the `Remediate` and the `Download playbook` buttons become available. +
@@ -205,7 +206,7 @@ In this case the default resolution is to set the ClientMaxAlive and ClientAlive
 This will redirect you to Monitor → Jobs where you can see the job running that you just initiated. This job may take 2-5 minutes to complete. Wait for the results to show success. +
 
 .Remediation status page
-image::remediation-status.png[link=self, window=blank, width=100%]
+image::LB1141_M04_07.png[link=self, window=blank, width=100%]
 
 
 [start=9]
@@ -229,7 +230,7 @@ Fortunately this is very easy to see inside of the Satellite user interface (or 
 From the last section you should be in the Satellite user interface in Red Hat Lightspeed → Recommendations.  
 
 .All Recommendations fixed
-image::lb1187_M4_NoRecommendations.png[link=self, window=blank, width=100%]
+image::LB1141_M04_08.png[link=self, window=blank, width=100%]
 
 Notice in the image above that while you have no recommendations, there are still default filters applied. +
 This is because Red Hat Lightspeed wants to focus on things that are actively impacting your systems. +
@@ -239,10 +240,10 @@ In other words, show me issues that affect my systems and that are enabled.
 To see the full list of recommendations, you will need to remove these filters and then search the list of recommendations.
 
 1. Locate the filters and remove the two default filters by clicking the `x` to the right of them. +
-In the image below there are 1951 total recommendations listed. +
+In the image below there are 2026 total recommendations listed. +
 
 .Filters removed
-image::lb1187_M4_NoFilters.png[link=self, window=blank, width=100%]
+image::LB1141_M04_09.png[link=self, window=blank, width=100%]
 
 With the full list showing, all you need to do is search.
 
@@ -265,7 +266,7 @@ Recommendations are commonly created by Red Hat from support cases, best practic
 
 In Red Hat Lightspeed, at the Hybrid Cloud Console, new recommendations are added weekly or more frequently if needed. +
 
-With Red Hat Lightspeed advisor in Satellite, new recommendations are delivered with container updates. + 
+With Red Hat Lightspeed in Satellite, new recommendations are delivered with container updates. + 
 When you upgrade your Satellite server to the latest release you will need to update the container images to get the latest recommendations and any updates to the advisor engine itself. +
 Container images can be downloaded from the Red Hat Ecosystem Catalog and transferred to Red Hat Satellite OR container images are included with Satellite ISOs.
 
