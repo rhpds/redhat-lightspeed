@@ -31,13 +31,13 @@ Log into the Hybrid Cloud Console with the following credentials: +
 User:
 [source,sh,role=execute]
 ----
- rhpd-lightspeed-lb1187
+rhpd-rhlightspeed-lb1141
 ----
 
 Password:
 [source,sh,role=execute]
 ----
-rhdp*lightspeed2026!
+rhdp*Lightspeed-2027!
 ----
 
 ====
@@ -51,7 +51,7 @@ rhdp*lightspeed2026!
 1. On the main page locate the `Red Hat Enterprise Linux` tile in the upper left and click https://console.redhat.com/insights/[RHEL^]. +
 
 .Hybrid Cloud Console Home Page
-image::lb1187_M2_HCCHomePage.png[link=self, window=blank, width=100%]
+image::LB1141_M02_01.png[link=self, window=blank, width=100%]
 
 [start=2]
 2. On the left hand navigation bar go to `Security → Compliance → SCAP Policies`
@@ -72,7 +72,7 @@ This page is showing you the SCAP policies in your environment. +
 This will look like the below image.
 
 .Creating a SCAP policy
-image::lb1187_M3_Create_CIS_Policy.png[link=self, window=blank, width=100%]
+image::LB1141_M03_02.png[link=self, window=blank, width=100%]
 
 NOTE: SCAP policies have dependencies on the version of RHEL.  Notice the `Supported OS versions` column.  Not all policies support all versions of RHEL.
 
@@ -101,14 +101,14 @@ One place where Infinicorp is more strict than the policy is that the maximum pa
 Scroll down to where you see the `Depends on values` as shown in the image below.
 
 .Tailoring Max Age value
-image::lb1187_M3_Tailor_Max_Age.png[link=self, window=blank, width=100%]
+image::LB1141_M03_03.png[link=self, window=blank, width=100%]
 
 [start=17]
 17. Click the pencil icon beside `maximum password age: 60`.
 18. Enter a new value of *45* and click the check icon as shown in the image below.
 
 .Tailoring Max Age value
-image::lb1187_M3_Tailor_Max_Age_45.png[link=self, window=blank, width=100%]
+image::LB1141_M03_04.png[link=self, window=blank, width=100%]
 
 This updated the rule to a maximum password of 45 days. +
 We could have simply unchecked the rule if we didn’t want to evaluate this rule at all in our environment, but we have very strict adherence to policies at Infinicorp. 
@@ -155,7 +155,7 @@ sudo insights-client --compliance
 Running the `insights-client --compliance` command will use OpenSCAP to scan the system and upload the resulting xccdf (eXtensible Configuration Checklist Description Format) file to the Hybrid Cloud Console for review.
 
 .Evaluating compliance status
-image::lb1187_M3_EvaluateCompliance.png[../assets/lb1187_M3_EvaluateCompliance]
+image::LB1141_M03_05.png[link=self, window=blank, width=100%]
 
 NOTE: While the regular `insights-client` command runs daily as a systemd process, the `--compliance` command is not included in that daily run.  Once you deploy this on your systems you will want to schedule this to run on a recurring basis using cron or similar.  This is covered in more detail in the https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html-single/assessing_and_monitoring_security_policy_compliance_of_rhel_systems/index#setting-recurring-scans_compliance-getting-started[documentation^].
 
@@ -188,13 +188,13 @@ Notice that there is an export symbol to the right of `Systems meeting complianc
 It is possible to export a report from this page, but we are not going to do so at this time. +
 
 .Report Summary
-image::lb1187_M3_CIS_Policy_report_summary.png[../assets/lb1187_M3_CIS_Policy_report_summary]
+image::LB1141_M03_06.png[link=self, window=blank, width=100%]
 
 [start=4]
 4. Click on your policy name.  This will open the report giving additional details. +
 
 .Report Details
-image::lb1187_M3_CIS_Policy_report_details.png[../assets/lb1187_M3_CIS_Policy_report_details]
+image::LB1141_M03_07.png[link=self, window=blank, width=100%]
 
 From here you can see your policy status. + 
 Starting in the upper left, we have 100% of systems compliant to the policy.  +
@@ -216,8 +216,8 @@ The compliance report will tell you if a system isn’t reporting.  +
 There are also tabs below for `Reporting` and `Never reported` where you can easily get a list of these systems. 
 
 Looking at the bottom of the page, we can see the system that you scanned. +
-In this case your system is compliant, with a compliance score of 99% and 7 failed rules. +
-Since the compliance threshold was set at 97%, this 99% score is considered passing. + 
+In this case your system is compliant, with a compliance score of 97% and 7 failed rules. +
+Since the compliance threshold was set at 97%, this 97% score is considered passing. + 
 
 Each rule in a policy is weighted with a severity, so it is possible to have a 100% passing score and still have individual rules failing. +
 
@@ -238,7 +238,7 @@ You know that your system is compliant to the CIS Level 1 Server policy, but the
 Begin where you left off in the policy report.
 
 .Report Details
-image::lb1187_M3_CIS_Policy_report_details.png[../assets/lb1187_M3_CIS_Policy_report_details]
+image::LB1141_M03_07.png[link=self, window=blank, width=100%]
 
 1. In the bottom of the report you see the row with your system, the failed rules, and the compliance score. +
 
@@ -250,7 +250,7 @@ This shows you the system and only the rules that have failed.
 4. Click the arrow to the left of `Disable SSH Root Login` to expand the failed rule - this should look like the image below. 
 
 .System Details
-image::lb1187_M3_CIS_Policy_system_details.png[../assets/lb1187_M3_CIS_Policy_system_details]
+image::LB1141_M03_08.png[link=self, window=blank, width=100%]
 
 For any failed rule the compliance service shows you the name of the rule, the severity (which affects the scoring), the description of the rule, identifier and references with links, and a rationale for the rule.  
 
@@ -266,33 +266,43 @@ This would be very useful for sending a list of failed rules to the SecOps team.
 7. Look through the list of rules and click the checkbox next to one or more of the rules that have a remediation type of `Playbook`. +
 Selecting a rule will enable the `Plan remediation` button.
 8. Click the `Plan remediation` button. + 
-This will open the `Remediate with Ansible` wizard.
+This will open the `Plan a remediation` wizard.
 9. Name your playbook: *{guid} compliance fix*
-10. Click Next.
-11. Your system will be selected. +
-Reminder: your system name is: `rhel-{guid}-1` +
-Click Next.
-12. The `Remediation review` tab will list the fixes for the issues you selected and let you know if a reboot is required.  +
-Review the information and click Submit.
-13. In the upper right hand corner you’ll see a pop up with a link that says `Playbook created`. +
-Click the hyperlink to the playbook named `{guid} compliance fix`.
+10. Under Plan name, click "Create new plan {guid} compliance fix"
 
-NOTE: If you miss the pop up, in the left hand navigation bar you can click Automation Toolkit → Remediation Plans and locate and click your playbook.
+.Name New Plan
+image::LB1141_M03_09.png[link=self, window=blank, width=100%]
 
-[start=14]
-14. While looking at your remediation plan you created, you have a couple of options in the upper right. +
+NOTE: If you do not click the Create new plan dropdown, the "Create Plan" button will not become available.
+
+The Plan summary assigns a point value to the remediation plan.  This remediation capability is pretty basic compared to something like Ansible Automation Platform, and this plan summary keeps the plan from getting so complicated that Red Hat Lightspeed can't relaibly remediate.  The remediation tools cap you at 100 systems and 1000 action points.  
+
+You are also given the option to download a preview of the playbook if you desire. 
+
+[start=11]
+11. Click Create Plan.
+
+.Create Plan
+image::LB1141_M03_10.png[link=self, window=blank, width=100%]
+
+[start=12]
+12. You will be redirected to the Automation Toolkit --> Remediations Plans section of the Hybrid Cloud Console.  Your plan will be open. +
+The `Planned remediation` tab will list the fixes for the issues you selected and let you know if a reboot is required.  +
+
+.Remediation Plan
+image::LB1141_M03_11.png[link=self, window=blank, width=100%]
+
+[start=13]
+13. While looking at your remediation plan you created, you have a couple of options in the upper right. +
 The `Execute` button is unavailable.  Your user in this lab does not have permission to execute remediation.  No user gets this permission by default - it has to be explicitly provided. +
 *With so many people taking this lab at the same time we have opted to not enable this feature.*  +
 An interactive demo was shared at the end of module 2 that shows how this works. +
 
-.Remediation Plan
-image::lb1187_M3_RemediationPlan.png[../assets/lb1187_M3_RemediationPlan]
-
-[start=15]
-15. Click the Download button. +
+[start=14]
+14. Click the Download button. +
 The playbook is downloaded via your browser.  
 
-NOTE: The exact steps may vary per browser, in chrome you click save to save the file. 
+NOTE: The exact steps may vary per browser, in chrome you click "save" to save the file. 
 
 To view the playbook you will need to locate the downloaded file then open the .yml file in a text editor.
 
