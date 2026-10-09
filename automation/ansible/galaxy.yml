@@ -1,0 +1,10 @@
+---
+namespace: "redhat_lightspeed"
+name: "automation"
+version: "1.0.0"
+readme: README.md
+authors:
+  - "JBSpinks mitsharm@redhat.com"
+description: "Starter collection for this project's custom Ansible automation."
+license: []
+repository: "https://github.com/rhpds/redhat-lightspeed"
