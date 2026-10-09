@@ -31,32 +31,32 @@ spec:
     - id: module-01
       title: "Welcome to Infinicorp - we have tasks for you!"
       duration_min: 10
-      status: not_started
+      status: complete
       slug: module-01-overview
     - id: module-02
       title: "Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate and remediate CVEs"
       duration_min: 35
-      status: not_started
+      status: complete
       slug: module-02-hcc-vulnerabilities
     - id: module-03
       title: "Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate regulatory compliance"
       duration_min: 30
-      status: not_started
+      status: complete
       slug: module-03-hcc-compliance
     - id: module-04
       title: "Red Hat Lightspeed Advisor in Satellite"
       duration_min: 25
-      status: not_started
+      status: complete
       slug: module-04-satellite-advisor
     - id: module-05
       title: "Red Hat Lightspeed Vulnerability in Red Hat Satellite"
       duration_min: 10
-      status: not_started
+      status: complete
       slug: module-05-satellite-vulnerability
     - id: module-06
       title: "Recap"
       duration_min: 5
-      status: not_started
+      status: complete
       slug: module-06-recap
   environment:
     platform: "rhel-vms"
