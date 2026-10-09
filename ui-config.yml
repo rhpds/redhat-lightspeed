@@ -23,10 +23,13 @@ antora:
 
 tabs:
   - name: "Satellite Web UI"
-    url: https://satellite-${guid}.${domain}/
+    url: https://satellite-${GUID}.${DOMAIN}/
   - name: "satellite terminal"
-    url: /wetty_satellite/ssh/root
-  - name: "rhel-${guid}-1 terminal"
-    url: /wetty_rhel-${guid}-1
-  - name: "rhel-${guid}-2 terminal"
-    url: /wetty_rhel-${guid}-2/ssh/root
+    path: /wetty_satellite/ssh/root
+    port: 443
+  - name: "rhel-${GUID}-1 terminal"
+    path: /wetty_rhel-${GUID}-1
+    port: 443
+  - name: "rhel-${GUID}-2 terminal"
+    path: /wetty_rhel-${GUID}-2/ssh/root
+    port: 443

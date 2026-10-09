@@ -1,0 +1,8 @@
+---
+- name: Validate module-04 — Red Hat Lightspeed Advisor in Satellite
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Placeholder — replace with real validation
+      ansible.builtin.debug:
+        msg: "Validation not yet implemented"

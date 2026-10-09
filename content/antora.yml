@@ -1,9 +1,15 @@
 ---
 name: modules
 version: master
+nav:
+  - modules/ROOT/nav.adoc
 
 asciidoc:
   attributes:
     lab_name: "Hands on with Red Hat Lightspeed in Satellite"
     release-version: master
     page-pagination: true
+    experimental: true
+    guid: CHANGEME
+    ssh_user: lab-user
+    ssh_password: CHANGEME

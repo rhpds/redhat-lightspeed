@@ -1,0 +1,8 @@
+---
+- name: Solve module-02 — Red Hat Lightspeed via HCC - Evaluate and remediate CVEs
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Placeholder — replace with real solve automation
+      ansible.builtin.debug:
+        msg: "Solve step not yet implemented"

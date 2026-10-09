@@ -1,3 +1,4 @@
+* xref:index.adoc[Introduction]
 * xref:module-01-overview.adoc[1. Overview]
 * xref:module-02-hcc-vulnerabilities.adoc[2. Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate and remediate CVEs]
 * xref:module-03-hcc-compliance.adoc[3. Red Hat Lightspeed via the Hybrid Cloud Console - Evaluate regulatory compliance]

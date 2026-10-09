@@ -1,0 +1,8 @@
+---
+- name: Solve module-04 — Red Hat Lightspeed Advisor in Satellite
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Placeholder — replace with real solve automation
+      ansible.builtin.debug:
+        msg: "Solve step not yet implemented"

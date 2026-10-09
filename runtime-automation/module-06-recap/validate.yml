@@ -1,0 +1,8 @@
+---
+- name: Validate module-06 — Recap
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Placeholder — replace with real validation
+      ansible.builtin.debug:
+        msg: "Validation not yet implemented"
