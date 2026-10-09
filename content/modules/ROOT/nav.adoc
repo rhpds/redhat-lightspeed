@@ -5,3 +5,4 @@
 * xref:module-04-satellite-advisor.adoc[4. Red Hat Lightspeed Advisor in Satellite]
 * xref:module-05-satellite-vulnerability.adoc[5. Red Hat Lightspeed Vulnerability in Red Hat Satellite]
 * xref:module-06-recap.adoc[6. Recap]
+* xref:conclusion.adoc[Conclusion]

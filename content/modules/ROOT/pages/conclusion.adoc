@@ -1,0 +1,33 @@
+:imagesdir: ../assets/images
+
+= Conclusion
+
+Congratulations on completing *Hands on with Red Hat Lightspeed in Satellite*!
+
+== What You Learned
+
+Working through the Infinicorp scenario, you:
+
+* *Analyzed CVE exposure* on an internet-connected RHEL 9.7 host using the Red Hat Lightspeed vulnerability service at the Hybrid Cloud Console, and generated an Ansible remediation playbook to address critical findings.
+
+* *Evaluated regulatory compliance* of a RHEL 9.7 host against the CIS Level 1 SCAP policy using Red Hat Lightspeed at the Hybrid Cloud Console, and identified actionable remediation steps.
+
+* *Managed advisor recommendations* on a Satellite-connected RHEL 10.1 host by downloading and triggering a Red Hat-generated playbook directly from the Red Hat Lightspeed in Satellite interface inside Red Hat Satellite 6.19.
+
+* *Explored the vulnerability service* in Red Hat Satellite 6.19 by investigating CVEs on a disconnected RHEL host, setting business risk and status, and applying errata to remediate a finding — all without sending data outside the Satellite.
+
+* *Compared the two deployment models* — Red Hat Lightspeed at the Hybrid Cloud Console for internet-connected environments, and Red Hat Lightspeed in Satellite for self-managed, disconnected environments.
+
+== Key Takeaways
+
+Red Hat Lightspeed now supports two delivery models:
+
+* *Hybrid Cloud Console* — cloud-managed, updated continuously, full feature set including vulnerability remediation and compliance scanning.
+* *Red Hat Lightspeed in Satellite* — self-managed, runs as Podman containers on your Satellite server, no data leaves the network. Advisor and vulnerability services are generally available in Red Hat Satellite 6.19.
+
+== Learn More
+
+* https://www.redhat.com/en/lightspeed[Red Hat Lightspeed product page^]
+* https://access.redhat.com/documentation/en-us/red_hat_satellite/6.19[Red Hat Satellite 6.19 documentation^]
+* https://www.redhat.com/en/technologies/management/insights/data-application-security[Red Hat Lightspeed data and security^]
+* https://console.redhat.com/[Red Hat Hybrid Cloud Console^]
