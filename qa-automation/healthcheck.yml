@@ -1,7 +1,8 @@
 ---
 # HEALTHCHECK — Quick environment readiness check (migrated ZT Guided content)
-# Verifies the bastion host is reachable via SSH. Non-destructive: does not
-# modify any lab state. Should complete in under 60 seconds.
+# Verifies the bastion host is reachable via SSH and the Satellite web UI is
+# accessible via HTTPS. Non-destructive: does not modify any lab state.
+# Should complete in under 60 seconds.
 #
 # Exit 0 = healthy, non-zero = unhealthy.
 
@@ -17,10 +18,31 @@
         ansible_ssh_user: "{{ lookup('ansible.builtin.env', 'BASTION_USER') }}"
         ansible_ssh_pass: "{{ lookup('ansible.builtin.env', 'BASTION_PASSWORD') }}"
 
-- name: Healthcheck
+- name: Verify SSH connectivity to bastion
   hosts: all:!localhost
   gather_facts: false
   become: false
   tasks:
-    - name: Verify SSH connectivity
+    - name: Ping bastion host
       ansible.builtin.ping:
+
+- name: Verify Satellite web UI is available
+  hosts: localhost
+  gather_facts: false
+  vars:
+    satellite_url: "https://satellite-{{ lookup('ansible.builtin.env', 'GUID') }}.{{ lookup('ansible.builtin.env', 'DOMAIN') }}"
+  tasks:
+    - name: Check Satellite HTTPS endpoint responds
+      ansible.builtin.uri:
+        url: "{{ satellite_url }}"
+        method: GET
+        validate_certs: false
+        status_code:
+          - 200
+          - 302
+          - 401
+        timeout: 30
+      register: satellite_check
+      retries: 5
+      delay: 10
+      until: satellite_check is not failed
