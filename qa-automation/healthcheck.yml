@@ -3,9 +3,9 @@
 #
 # Verifies:
 #   - Satellite host is reachable and services are operational
-#   - RHEL target hosts (rhel1, rhel2) are reachable from satellite
-#   - Module 02/03 preconditions: rhel1 registered to Insights (HCC connected)
-#   - Module 04/05 preconditions: rhel2 registered in Satellite, advisor
+#   - RHEL target hosts (rhel1.lab, rhel2.lab) are reachable from satellite
+#   - Module 02/03 preconditions: rhel1.lab registered to Insights (HCC connected)
+#   - Module 04/05 preconditions: rhel2.lab registered in Satellite, advisor
 #     recommendation present, CVE baseline (vulnerable openssl), errata available
 #   - Wetty terminals are accessible
 #
@@ -69,23 +69,23 @@
   gather_facts: false
   become: true
   tasks:
-    - name: Verify rhel1 is reachable
-      ansible.builtin.command: ping -c 1 -W 5 rhel1
+    - name: Verify rhel1.lab is reachable
+      ansible.builtin.command: ping -c 1 -W 5 rhel1.lab
       changed_when: false
 
-    - name: Verify rhel2 is reachable
-      ansible.builtin.command: ping -c 1 -W 5 rhel2
+    - name: Verify rhel2.lab is reachable
+      ansible.builtin.command: ping -c 1 -W 5 rhel2.lab
       changed_when: false
 
-    - name: Verify SSH to rhel1
+    - name: Verify SSH to rhel1.lab
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel1 hostname
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab hostname
       changed_when: false
       timeout: 15
 
-    - name: Verify SSH to rhel2
+    - name: Verify SSH to rhel2.lab
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel2 hostname
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel2.lab hostname
       changed_when: false
       timeout: 15
 
@@ -94,15 +94,15 @@
   gather_facts: false
   become: true
   tasks:
-    - name: Verify insights-client is installed on rhel1
+    - name: Verify insights-client is installed on rhel1.lab
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel1 rpm -q insights-client
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab rpm -q insights-client
       changed_when: false
       timeout: 15
 
-    - name: Verify rhel1 is registered to Insights
+    - name: Verify rhel1.lab is registered to Insights
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel1 insights-client --status
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab insights-client --status
       register: _rhel1_insights_status
       changed_when: false
       failed_when: "'registered' not in _rhel1_insights_status.stdout | lower"
@@ -115,7 +115,7 @@
   vars:
     satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
   tasks:
-    - name: Verify rhel2 is registered in Satellite
+    - name: Verify rhel2.lab is registered in Satellite
       ansible.builtin.command:
         cmd: hammer host info --name rhel2.lab
       changed_when: false
@@ -145,16 +145,16 @@
           - (_insights_hosts.json.total | default(0) | int) >= 1
         fail_msg: "No hosts with Lightspeed data found in Satellite"
 
-    - name: Verify vulnerable openssl baseline on rhel2
+    - name: Verify vulnerable openssl baseline on rhel2.lab
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel2 rpm -q openssl
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel2.lab rpm -q openssl
       register: _rhel2_openssl
       changed_when: false
       timeout: 15
 
-    - name: Log openssl version on rhel2
+    - name: Log openssl version on rhel2.lab
       ansible.builtin.debug:
-        msg: "rhel2 openssl: {{ _rhel2_openssl.stdout }}"
+        msg: "rhel2.lab openssl: {{ _rhel2_openssl.stdout }}"
 
     - name: Verify errata RHSA-2026:1472 is available in Satellite
       ansible.builtin.command:

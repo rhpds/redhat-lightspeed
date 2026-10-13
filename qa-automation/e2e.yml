@@ -34,16 +34,16 @@
 # ── Module 02: HCC Vulnerabilities ──────────────────────────────────
 # Student action: browse CVEs on console.redhat.com (external SaaS UI)
 # Solve: not possible — HCC browser-only actions
-# Validate: rhel1 is registered and has CVE data flowing to Insights
+# Validate: rhel1.lab is registered and has CVE data flowing to Insights
 
-- name: "Module 02 - Validate: rhel1 registered to Insights with CVE data"
+- name: "Module 02 - Validate: rhel1.lab registered to Insights with CVE data"
   hosts: satellite
   gather_facts: false
   become: true
   tasks:
-    - name: Verify rhel1 is registered to Insights
+    - name: Verify rhel1.lab is registered to Insights
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel1 insights-client --status
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab insights-client --status
       register: _rhel1_insights
       changed_when: false
       failed_when: "'registered' not in _rhel1_insights.stdout | lower"
@@ -51,22 +51,22 @@
 
     - name: Log Insights registration status
       ansible.builtin.debug:
-        msg: "rhel1 Insights status: {{ _rhel1_insights.stdout }}"
+        msg: "rhel1.lab Insights status: {{ _rhel1_insights.stdout }}"
 
 # ── Module 03: HCC Compliance ───────────────────────────────────────
 # Student action: create SCAP policy on HCC (UI), run insights-client
-#   --compliance on rhel1 (terminal), review report on HCC (UI)
+#   --compliance on rhel1.lab (terminal), review report on HCC (UI)
 # Solve: run the compliance scan (generates real HCC load, 1-5 min)
 # Validate: scan completed and data uploaded
 
-- name: "Module 03 - Solve: Run OpenSCAP compliance scan on rhel1"
+- name: "Module 03 - Solve: Run OpenSCAP compliance scan on rhel1.lab"
   hosts: satellite
   gather_facts: false
   become: true
   tasks:
-    - name: Run insights-client --compliance on rhel1
+    - name: Run insights-client --compliance on rhel1.lab
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel1 insights-client --compliance
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab insights-client --compliance
       register: _compliance_scan
       timeout: 600
       changed_when: true
@@ -87,11 +87,11 @@
         fail_msg: "insights-client --compliance failed with rc={{ _compliance_scan.rc }}"
 
 # ── Module 04: Satellite Advisor ────────────────────────────────────
-# Student action: run insights-client on rhel2 (terminal), log into
+# Student action: run insights-client on rhel2.lab (terminal), log into
 #   Satellite UI, view "Decreased security: OpenSSH ClientAlive settings"
 #   recommendation, click Remediate
-# Solve: run insights-client on rhel2, then trigger Satellite remediation
-# Validate: recommendation cleared, sshd config updated on rhel2
+# Solve: run insights-client on rhel2.lab, then trigger Satellite remediation
+# Validate: recommendation cleared, sshd config updated on rhel2.lab
 
 - name: "Module 04 - Solve: Run insights-client and remediate advisor finding"
   hosts: satellite
@@ -100,10 +100,10 @@
   vars:
     satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
   tasks:
-    - name: Record pre-remediation sshd config on rhel2
+    - name: Record pre-remediation sshd config on rhel2.lab
       ansible.builtin.command:
         cmd: >-
-          ssh -o StrictHostKeyChecking=no root@rhel2
+          ssh -o StrictHostKeyChecking=no root@rhel2.lab
           grep -E 'ClientAliveInterval|ClientAliveCountMax' /etc/ssh/sshd_config
       register: _pre_sshd
       changed_when: false
@@ -111,11 +111,11 @@
 
     - name: Log pre-remediation sshd config
       ansible.builtin.debug:
-        msg: "rhel2 sshd before: {{ _pre_sshd.stdout_lines | default(['not set']) }}"
+        msg: "rhel2.lab sshd before: {{ _pre_sshd.stdout_lines | default(['not set']) }}"
 
-    - name: Run insights-client on rhel2 to generate advisor data
+    - name: Run insights-client on rhel2.lab to generate advisor data
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel2 insights-client
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel2.lab insights-client
       timeout: 300
       changed_when: true
 
@@ -174,9 +174,9 @@
         seconds: 60
       when: "'NOT_FOUND' not in _remediation_trigger.stdout"
 
-    - name: Run insights-client on rhel2 to refresh advisor data
+    - name: Run insights-client on rhel2.lab to refresh advisor data
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel2 insights-client
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel2.lab insights-client
       timeout: 300
       changed_when: true
 
@@ -185,19 +185,19 @@
   gather_facts: false
   become: true
   tasks:
-    - name: Verify ClientAliveInterval is set on rhel2
+    - name: Verify ClientAliveInterval is set on rhel2.lab
       ansible.builtin.command:
         cmd: >-
-          ssh -o StrictHostKeyChecking=no root@rhel2
+          ssh -o StrictHostKeyChecking=no root@rhel2.lab
           sshd -T 2>/dev/null | grep -i clientaliveinterval
       register: _post_cai
       changed_when: false
       failed_when: false
 
-    - name: Verify ClientAliveCountMax is set on rhel2
+    - name: Verify ClientAliveCountMax is set on rhel2.lab
       ansible.builtin.command:
         cmd: >-
-          ssh -o StrictHostKeyChecking=no root@rhel2
+          ssh -o StrictHostKeyChecking=no root@rhel2.lab
           sshd -T 2>/dev/null | grep -i clientalivecountmax
       register: _post_cacm
       changed_when: false
@@ -214,24 +214,24 @@
 #   set business risk to Critical, apply errata RHSA-2026:1472, verify
 #   CVE is cleared
 # Solve: apply errata via hammer, run insights-client to refresh
-# Validate: openssl upgraded, CVE no longer affects rhel2
+# Validate: openssl upgraded, CVE no longer affects rhel2.lab
 
 - name: "Module 05 - Solve: Apply errata for CVE-2025-15467"
   hosts: satellite
   gather_facts: false
   become: true
   tasks:
-    - name: Record pre-patch openssl version on rhel2
+    - name: Record pre-patch openssl version on rhel2.lab
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel2 rpm -q openssl
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel2.lab rpm -q openssl
       register: _pre_openssl
       changed_when: false
 
     - name: Log pre-patch openssl
       ansible.builtin.debug:
-        msg: "rhel2 openssl before: {{ _pre_openssl.stdout }}"
+        msg: "rhel2.lab openssl before: {{ _pre_openssl.stdout }}"
 
-    - name: Apply errata RHSA-2026:1472 to rhel2
+    - name: Apply errata RHSA-2026:1472 to rhel2.lab
       ansible.builtin.command:
         cmd: >-
           hammer host errata apply
@@ -249,9 +249,9 @@
       ansible.builtin.pause:
         seconds: 60
 
-    - name: Run insights-client on rhel2 to refresh vulnerability data
+    - name: Run insights-client on rhel2.lab to refresh vulnerability data
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel2 insights-client
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel2.lab insights-client
       timeout: 300
       changed_when: true
 
@@ -266,9 +266,9 @@
   vars:
     satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
   tasks:
-    - name: Verify openssl upgraded on rhel2
+    - name: Verify openssl upgraded on rhel2.lab
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel2 rpm -q openssl
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel2.lab rpm -q openssl
       register: _post_openssl
       changed_when: false
 
@@ -281,10 +281,10 @@
     - name: Log post-patch openssl
       ansible.builtin.debug:
         msg:
-          - "rhel2 openssl before: {{ _pre_openssl.stdout }}"
-          - "rhel2 openssl after:  {{ _post_openssl.stdout }}"
+          - "rhel2.lab openssl before: {{ _pre_openssl.stdout }}"
+          - "rhel2.lab openssl after:  {{ _post_openssl.stdout }}"
 
-    - name: Verify CVE errata no longer applicable to rhel2
+    - name: Verify CVE errata no longer applicable to rhel2.lab
       ansible.builtin.shell:
         cmd: |
           RESULT=$(hammer --output json host errata list \
@@ -309,9 +309,9 @@
           {{ 'CVE cleared — errata fully applied.' if (_cve_check.stdout | trim) == '0'
              else 'Errata still showing — may need time to refresh.' }}
 
-    - name: Verify rhel2 is still registered with Insights
+    - name: Verify rhel2.lab is still registered with Insights
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel2 insights-client --status
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel2.lab insights-client --status
       register: _rhel2_final_status
       changed_when: false
       failed_when: "'registered' not in _rhel2_final_status.stdout | lower"
@@ -321,8 +321,8 @@
       ansible.builtin.debug:
         msg:
           - "=== E2E Run Complete ==="
-          - "Module 02 (HCC Vulnerabilities): VALIDATED — rhel1 registered to Insights"
-          - "Module 03 (HCC Compliance): SOLVED — compliance scan ran on rhel1"
-          - "Module 04 (Satellite Advisor): SOLVED — OpenSSH recommendation remediated on rhel2"
-          - "Module 05 (Satellite Vulnerability): SOLVED — RHSA-2026:1472 applied, openssl upgraded on rhel2"
+          - "Module 02 (HCC Vulnerabilities): VALIDATED — rhel1.lab registered to Insights"
+          - "Module 03 (HCC Compliance): SOLVED — compliance scan ran on rhel1.lab"
+          - "Module 04 (Satellite Advisor): SOLVED — OpenSSH recommendation remediated on rhel2.lab"
+          - "Module 05 (Satellite Vulnerability): SOLVED — RHSA-2026:1472 applied, openssl upgraded on rhel2.lab"
           - "Modules 01, 06: SKIPPED — informational only"
