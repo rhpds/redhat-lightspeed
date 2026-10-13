@@ -5,16 +5,16 @@
 .Infinicorp Logo
 image::lb1187_M1_Infinicorp_Logo.png[link=self, window=blank, width=100%^]
 
-We need your help to update Infinicorp’s management of their Red Hat Enterprise Linux environments.
+Infinicorp needs your help to update management of our Red Hat Enterprise Linux environments.
 
-Infinicorp Robotics Solutions, headquartered here in sunny Las Vegas NV, is a large multi-national corporation focused on electronics manufacturing across a variety of industries.  We got our start selling vending machines for a wide variety of products here in Las Vegas, but over time we have branched out into the field of robotics and have a goal of being the leading world wide seller and distributor of autonomous robots.
+Infinicorp Robotics Solutions, headquartered here in sunny Las Vegas NV, is a large multi-national corporation focused on electronics manufacturing across a variety of industries.  Infinicorp got our start selling vending machines for a wide variety of products here in Las Vegas, but over time has branched out into the field of robotics and has a goal of being the leading world wide seller and distributor of autonomous robots.
 
 Most of our manufacturing facilities are in the continental United States, primarily Pasadena California, Houston Texas, Columbus Ohio, and Herndon Virginia. 
 
 .Infinicorp Locations
 image::lb1187_M1_Infinicorp.png[link=self, window=blank, width=100%]
 
-In each location we have a manufacturing facility, datacenter, and office buildings.  
+In each location there is a manufacturing facility, datacenter, and office buildings.  
 
 Infinicorp has some challenges around addressing vulnerabilities and identifying systems that are not in alignment with various regulatory compliance policies. 
 
@@ -22,26 +22,27 @@ Infinicorp has some challenges around addressing vulnerabilities and identifying
 *Please complete each section in order.*
 
 =====
-.Where we need your help:
+.Where Infinicorp needs your help:
 [%collapsible]
 ====
 
-We need to make sure the internet connected systems at Infinicorp are up to date and compliant with regulatory compliance policies.  We also want to identify any critical vulnerabilities or other system configurations that need to be addressed.  
+The internet-connected systems at Infinicorp must remain up to date and compliant with regulatory standards. Identifying critical vulnerabilities and addressing misconfigurations are top priorities.
 
-We also need to make sure our newest versions of our Satellite connected systems are in good shape before we start rolling out upgrades to the rest of the fleet.  You have the first system built off of the latest approved packages and we want to verify this is a known good configuration and that there aren’t any critical vulnerabilities that need to be addressed.   
+Additionally, the newest versions of the Satellite-connected systems require full validation prior to rolling out upgrades across the rest of the fleet. The primary objective is to use the first system built from the latest approved packages to confirm a known good configuration and verify that no critical vulnerabilities remain.
 
-For testing purposes, in your lab environment we have already provided for you: +
+For testing purposes, the lab environment includes:
 
 * In your connected environment a RHEL 9.7 host that is directly connected to Red Hat Lightspeed at the Hybrid Cloud Console
 * In your disconnected environment, a pre-configured Red Hat Satellite 6.19 which has one Red Hat Enterprise Linux (RHEL) 10.1 host registered. + 
-(Note: The Satellite does have a route to the internet for content update purposes - we just don't allow direct internet access for our hosts.)
+
+NOTE: Satellite retains an internet route solely for content updates; direct internet access is not permitted for hosts.
 
 .Testing Environment
 image::lb1187_M1_Labinfra.png[link=self, window=blank, width=100%]
 
-NOTE: To see an image full screen, right-click on the image and select "Open image in new Tab" or the equivalent option for your browser.
+NOTE: To see an image full screen, right-click on the image and select "Open Image in New Tab" or the equivalent option for your browser.
 
-Here are the tasks we are going to ask you to complete in Infinicorp's testing environment:
+Here are the tasks you will be asked to complete in Infinicorp's testing environment:
 
 '''
 
@@ -58,9 +59,9 @@ For Satellite connected systems: +
 '''
 
 NOTE: In the test environment there will be other people also testing using the same Hybrid Cloud Console account. +
-Please name items as instructed so that you can easily identify objects that you create. +
+Please name items as instructed throughout the lab so that you can easily identify objects that you create. +
 
-Before we set you on these tasks, let’s take a few minutes to review some of the tools that you will be using today.  +
+Before you set out on these tasks, let’s take a few minutes to review some of the tools that you will be using today.  +
 
 To help with RHEL management, there are two main products that you will be working with: + 
 
@@ -71,7 +72,7 @@ https://www.redhat.com/en/lightspeed[Red Hat Lightspeed^] is an end-to-end syste
 
 https://www.redhat.com/en/technologies/management/satellite[Red Hat Satellite^] is an infrastructure management product specifically designed to keep Red Hat Enterprise Linux® environments and other Red Hat infrastructure running efficiently, with security, and compliant with various standards. +
 
-At Red Hat Summit 2025 we announced that we would deliver self-managed Red Hat Lightspeed through Red Hat Satellite. +
+At Red Hat Summit 2025 self-managed Red Hat Lightspeed through Red Hat Satellite was announced. +
 
 ====
 =====
