@@ -10,7 +10,7 @@ The compliance service uses Open Security Content Automation Protocol (OpenSCAP)
 
 Each policy is made up of a number of rules, and the compliance service enables you to define the policy from one of the standards, then tailor (change) the policy to meet your needs including disabling specific rules or changing specific values to better align with your organizational needs.
 
-What we will need you to do is to create a CIS Level 1 Server policy then customize the policy and add your RHEL 9.7 host to the policy. 
+You will create a CIS Level 1 Server policy then customize the policy and add your RHEL 9.7 host to the policy. 
 
 After you’ve created the policy you’ll log into the terminal of the RHEL server and run the command that performs a compliance scan and sends the results to the Hybrid Cloud Console. 
 
@@ -63,7 +63,7 @@ This page is showing you the SCAP policies in your environment. +
 [start=3]
 3. Click the `Create new policy` button.
 
-4. Select RHEL9.
+4. Select RHEL 9.
 
 5. Near the `Policy type` box in the `Filter by policy name` search bar, type *CIS*
 
@@ -78,14 +78,20 @@ NOTE: SCAP policies have dependencies on the version of RHEL.  Notice the `Suppo
 
 [start=7]
 7. Click Next.
-8. Provide a policy name of: *{guid} CIS L1 Server Policy* 
+8. Provide a policy name of:
+
+[source,js]
+----
+{guid} CIS L1 Server Policy
+----
 
 NOTE: Please replace the default policy name with  the policy name as shown above. This helps you find your policy in later steps and will help with automated cleanup tasks.  
 
 [start=9]
 9. Optionally you can enter a description or business objective.  
 10. Red Hat Lightspeed allows you to set a compliance threshold.  This means that anything over the entered threshold is considered compliant even if some rules are not passed.  +
-*Set the compliance threshold to `97`*
+Set the `Compliance threshold (%)` to `97`
+
 11. Click Next.
 12. Locate and select your RHEL 9.7 host.  It may help to use the search filter. +
 Reminder: your system name is: `rhel-{guid}-1` +
@@ -96,7 +102,14 @@ NOTE: Please only add your host to this policy.
 13. Click Next.
 14. In the `Rules` section of the wizard you can tailor your policy.  This means that you can customize the policy by unselecting rules or editing values.  + 
 One place where Infinicorp is more strict than the policy is that the maximum password age at Infinicorp is 45 days.  You need to tailor the policy to reflect this. 
-15. Next to the `Name` filter in the `Filter by name` box enter: *Set Existing Passwords Maximum Age*
+15. Next to the `Name` filter in the `Filter by name` box enter: 
+
+[source,js]
+----
+Set Existing Passwords Maximum Age
+----
+
+[start=16]
 16. Expand the resulting rule so that you can see the details. +
 Scroll down to where you see the `Depends on values` as shown in the image below.
 
@@ -111,7 +124,7 @@ image::LB1141_M03_03.png[link=self, window=blank, width=100%]
 image::LB1141_M03_04.png[link=self, window=blank, width=100%]
 
 This updated the rule to a maximum password of 45 days. +
-We could have simply unchecked the rule if we didn’t want to evaluate this rule at all in our environment, but we have very strict adherence to policies at Infinicorp. 
+You could have simply unchecked the rule if you didn’t want to evaluate this rule at all in your environment, but Infinicorp has very strict adherence to policies. 
 
 [start=19]
 19. Click Next.
@@ -175,7 +188,7 @@ If not, go back to the section on logging into the Hybrid Cloud Console.
 We are going to pick back up in the compliance section where we left off.
 
 1. In the Hybrid Cloud Console go to Security → Compliance → Reports.  +
-If you closed the page, click this https://console.redhat.com/insights/compliance/reports[link] to go to the right place.
+If you closed the page, click this https://console.redhat.com/insights/compliance/reports[link^] to go to the right place.
 
 2. Locate (do not click) your policy. It may help to use the filter at the top to locate your policy. +
 Your policy should be named `{guid} CIS L1 Server Policy`.
@@ -267,7 +280,14 @@ This would be very useful for sending a list of failed rules to the SecOps team.
 Selecting a rule will enable the `Plan remediation` button.
 8. Click the `Plan remediation` button. + 
 This will open the `Plan a remediation` wizard.
-9. Name your playbook: *{guid} compliance fix*
+9. Name your playbook: 
+
+[source,js]
+----
+{guid} compliance fix
+----
+
+[start=10]
 10. Under Plan name, click "Create new plan {guid} compliance fix"
 
 .Name New Plan
@@ -277,7 +297,7 @@ NOTE: If you do not click the Create new plan dropdown, the "Create Plan" button
 
 The Plan summary assigns a point value to the remediation plan.  This remediation capability is pretty basic compared to something like Ansible Automation Platform, and this plan summary keeps the plan from getting so complicated that Red Hat Lightspeed can't relaibly remediate.  The remediation tools cap you at 100 systems and 1000 action points.  
 
-You are also given the option to download a preview of the playbook if you desire. 
+You are also given the option to download a preview of the playbook, but you will do that in a moment. 
 
 [start=11]
 11. Click Create Plan.
@@ -295,14 +315,14 @@ image::LB1141_M03_11.png[link=self, window=blank, width=100%]
 [start=13]
 13. While looking at your remediation plan you created, you have a couple of options in the upper right. +
 The `Execute` button is unavailable.  Your user in this lab does not have permission to execute remediation.  No user gets this permission by default - it has to be explicitly provided. +
-*With so many people taking this lab at the same time we have opted to not enable this feature.*  +
-An interactive demo was shared at the end of module 2 that shows how this works. +
+
+NOTE: Due to the high volume of concurrent participants taking this lab, this feature is not enabled. An interactive demo was shared at the end of module 2 that shows how this works.
 
 [start=14]
 14. Click the Download button. +
 The playbook is downloaded via your browser.  
 
-NOTE: The exact steps may vary per browser, in chrome you click "save" to save the file. 
+NOTE: The exact steps may vary per browser, in chrome you click "Save" to save the file. 
 
 To view the playbook you will need to locate the downloaded file then open the .yml file in a text editor.
 
