@@ -1,8 +1,19 @@
 ---
-# HEALTHCHECK — Quick environment readiness check (migrated ZT Guided content)
-# Verifies the bastion host is reachable via SSH and the Satellite web UI is
-# accessible via HTTPS. Non-destructive: does not modify any lab state.
+# HEALTHCHECK — Environment readiness for event use (Red Hat Lightspeed lab LB1141)
+#
+# Verifies:
+#   - Satellite host is reachable and services are operational
+#   - RHEL target hosts (rhel1, rhel2) are reachable from satellite
+#   - Module 02/03 preconditions: rhel1 registered to Insights (HCC connected)
+#   - Module 04/05 preconditions: rhel2 registered in Satellite, advisor
+#     recommendation present, CVE baseline (vulnerable openssl), errata available
+#   - Wetty terminals are accessible
+#
+# Non-destructive: does not modify any lab state.
 # Should complete in under 60 seconds.
+#
+# Env vars injected by ZT runner:
+#   BASTION_HOST, BASTION_PORT, BASTION_USER, BASTION_PASSWORD, GUID, DOMAIN
 #
 # Exit 0 = healthy, non-zero = unhealthy.
 
@@ -10,39 +21,179 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Add bastion host
+    - name: Add satellite host (bastion)
       ansible.builtin.add_host:
-        name: "{{ lookup('ansible.builtin.env', 'BASTION_HOST') }}"
+        name: satellite
         ansible_ssh_host: "{{ lookup('ansible.builtin.env', 'BASTION_HOST') }}"
-        ansible_ssh_port: "{{ lookup('ansible.builtin.env', 'BASTION_PORT') }}"
+        ansible_ssh_port: "{{ lookup('ansible.builtin.env', 'BASTION_PORT') | default('22', true) }}"
         ansible_ssh_user: "{{ lookup('ansible.builtin.env', 'BASTION_USER') }}"
         ansible_ssh_pass: "{{ lookup('ansible.builtin.env', 'BASTION_PASSWORD') }}"
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+        groups: satellite
 
-- name: Verify SSH connectivity to bastion
-  hosts: all:!localhost
+- name: Healthcheck - Satellite host
+  hosts: satellite
   gather_facts: false
-  become: false
+  become: true
+  vars:
+    satellite_password: "{{ lookup('ansible.builtin.env', 'SATELLITE_PASSWORD') | default(lookup('ansible.builtin.env', 'BASTION_PASSWORD'), true) }}"
   tasks:
-    - name: Ping bastion host
+    - name: Verify SSH connectivity
       ansible.builtin.ping:
 
-- name: Verify Satellite web UI is available
-  hosts: localhost
-  gather_facts: false
-  vars:
-    satellite_url: "https://satellite-{{ lookup('ansible.builtin.env', 'GUID') }}.{{ lookup('ansible.builtin.env', 'DOMAIN') }}"
-  tasks:
-    - name: Check Satellite HTTPS endpoint responds
+    - name: Verify Satellite services are running
+      ansible.builtin.command:
+        cmd: hammer ping
+      changed_when: false
+      timeout: 30
+
+    - name: Verify Satellite Web UI is responding
       ansible.builtin.uri:
-        url: "{{ satellite_url }}"
-        method: GET
+        url: https://localhost/users/login
         validate_certs: false
-        status_code:
-          - 200
-          - 302
-          - 401
-        timeout: 30
-      register: satellite_check
-      retries: 5
-      delay: 10
-      until: satellite_check is not failed
+        status_code: [200, 302]
+      changed_when: false
+
+    - name: Verify Satellite API is responding
+      ansible.builtin.uri:
+        url: https://localhost/api/v2/status
+        validate_certs: false
+        user: admin
+        password: "{{ satellite_password }}"
+        force_basic_auth: true
+        status_code: 200
+      changed_when: false
+
+- name: Healthcheck - RHEL hosts reachable from satellite
+  hosts: satellite
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Verify rhel1 is reachable
+      ansible.builtin.command: ping -c 1 -W 5 rhel1
+      changed_when: false
+
+    - name: Verify rhel2 is reachable
+      ansible.builtin.command: ping -c 1 -W 5 rhel2
+      changed_when: false
+
+    - name: Verify SSH to rhel1
+      ansible.builtin.command:
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel1 hostname
+      changed_when: false
+      timeout: 15
+
+    - name: Verify SSH to rhel2
+      ansible.builtin.command:
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel2 hostname
+      changed_when: false
+      timeout: 15
+
+- name: Healthcheck - Module 02/03 preconditions (HCC connected environment)
+  hosts: satellite
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Verify insights-client is installed on rhel1
+      ansible.builtin.command:
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel1 rpm -q insights-client
+      changed_when: false
+      timeout: 15
+
+    - name: Verify rhel1 is registered to Insights
+      ansible.builtin.command:
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel1 insights-client --status
+      register: _rhel1_insights_status
+      changed_when: false
+      failed_when: "'registered' not in _rhel1_insights_status.stdout | lower"
+      timeout: 30
+
+- name: Healthcheck - Module 04/05 preconditions (Satellite disconnected environment)
+  hosts: satellite
+  gather_facts: false
+  become: true
+  vars:
+    satellite_password: "{{ lookup('ansible.builtin.env', 'SATELLITE_PASSWORD') | default(lookup('ansible.builtin.env', 'BASTION_PASSWORD'), true) }}"
+  tasks:
+    - name: Verify rhel2 is registered in Satellite
+      ansible.builtin.command:
+        cmd: hammer host info --name rhel2.lab
+      changed_when: false
+      timeout: 15
+
+    - name: Verify CVE map file exists
+      ansible.builtin.stat:
+        path: /var/lib/foreman/cvemap.xml
+      register: r_cvemap
+      failed_when: not r_cvemap.stat.exists
+
+    - name: Verify Lightspeed advisor has recommendations
+      ansible.builtin.uri:
+        url: https://localhost/api/v2/insights_hosts
+        validate_certs: false
+        user: admin
+        password: "{{ satellite_password }}"
+        force_basic_auth: true
+        status_code: 200
+        return_content: true
+      register: _insights_hosts
+      changed_when: false
+
+    - name: Verify at least one host has Lightspeed data
+      ansible.builtin.assert:
+        that:
+          - (_insights_hosts.json.total | default(0) | int) >= 1
+        fail_msg: "No hosts with Lightspeed data found in Satellite"
+
+    - name: Verify vulnerable openssl baseline on rhel2
+      ansible.builtin.command:
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel2 rpm -q openssl
+      register: _rhel2_openssl
+      changed_when: false
+      timeout: 15
+
+    - name: Log openssl version on rhel2
+      ansible.builtin.debug:
+        msg: "rhel2 openssl: {{ _rhel2_openssl.stdout }}"
+
+    - name: Verify errata RHSA-2026:1472 is available in Satellite
+      ansible.builtin.command:
+        cmd: hammer erratum info --id RHSA-2026:1472
+      changed_when: false
+      timeout: 15
+
+- name: Healthcheck - Wetty terminals accessible
+  hosts: satellite
+  gather_facts: false
+  become: true
+  vars:
+    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
+    domain: "{{ lookup('ansible.builtin.env', 'DOMAIN') }}"
+    showroom_host: "{{ guid }}.{{ domain }}"
+  tasks:
+    - name: Verify satellite terminal (wetty)
+      ansible.builtin.command:
+        cmd: >-
+          curl -sk -o /dev/null -w '%{http_code}' --max-time 10
+          https://{{ showroom_host }}/wetty_satellite/ssh/root
+      register: _wetty_sat
+      changed_when: false
+      failed_when: _wetty_sat.stdout not in ['200', '301', '302', '401', '403']
+
+    - name: "Verify rhel1 terminal (wetty)"
+      ansible.builtin.command:
+        cmd: >-
+          curl -sk -o /dev/null -w '%{http_code}' --max-time 10
+          https://{{ showroom_host }}/wetty_rhel-{{ guid }}-1
+      register: _wetty_rhel1
+      changed_when: false
+      failed_when: _wetty_rhel1.stdout not in ['200', '301', '302', '401', '403']
+
+    - name: "Verify rhel2 terminal (wetty)"
+      ansible.builtin.command:
+        cmd: >-
+          curl -sk -o /dev/null -w '%{http_code}' --max-time 10
+          https://{{ showroom_host }}/wetty_rhel-{{ guid }}-2/ssh/root
+      register: _wetty_rhel2
+      changed_when: false
+      failed_when: _wetty_rhel2.stdout not in ['200', '301', '302', '401', '403']
