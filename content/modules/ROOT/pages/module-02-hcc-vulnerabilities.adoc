@@ -228,7 +228,7 @@ The `Planned remediation` tab will list the Actions the plan will address for th
 From the remediations page, while looking at your remediation plan you created, you have a couple of options in the upper right. +
 The `Execute` button is unavailable.  Your user in this lab does not have permission to execute remediation.  No user gets this permission by default - it has to be explicitly provided. +
 
-Note: Due to the high volume of concurrent participants taking this lab, this feature is not enabled. However, an interactive demo showcasing the complete end-to-end workflow is available at the end of this module.
+NOTE: Due to the high volume of concurrent participants taking this lab, this feature is not enabled. However, an interactive demo showcasing the complete end-to-end workflow is available at the end of this module.
 
 [start=7]
 7. Click the Download button. +
@@ -315,7 +315,7 @@ In the image below there are 743 critical or important CVEs when looking at the 
 .Critical or Important CVEs with or without errata
 image::LB1141_M02_07.5.png[lb1187_M2_CVE_wo_errata,85%,85%] 
 
-Note: Like before the exact number that you see may differ from the screenshot.  That is expected.
+NOTE: Like before the exact number that you see may differ from the screenshot.  That is expected.
 
 The advisory column will tell you if the CVE has an advisory available to resolve the CVE.  
 
