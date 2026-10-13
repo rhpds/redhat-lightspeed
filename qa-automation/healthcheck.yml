@@ -36,7 +36,7 @@
   gather_facts: false
   become: true
   vars:
-    satellite_password: "{{ lookup('ansible.builtin.env', 'SATELLITE_PASSWORD') | default(lookup('ansible.builtin.env', 'BASTION_PASSWORD'), true) }}"
+    satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
   tasks:
     - name: Verify SSH connectivity
       ansible.builtin.ping:
@@ -113,7 +113,7 @@
   gather_facts: false
   become: true
   vars:
-    satellite_password: "{{ lookup('ansible.builtin.env', 'SATELLITE_PASSWORD') | default(lookup('ansible.builtin.env', 'BASTION_PASSWORD'), true) }}"
+    satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
   tasks:
     - name: Verify rhel2 is registered in Satellite
       ansible.builtin.command:

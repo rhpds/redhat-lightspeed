@@ -98,7 +98,7 @@
   gather_facts: false
   become: true
   vars:
-    satellite_password: "{{ lookup('ansible.builtin.env', 'SATELLITE_PASSWORD') | default(lookup('ansible.builtin.env', 'BASTION_PASSWORD'), true) }}"
+    satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
   tasks:
     - name: Record pre-remediation sshd config on rhel2
       ansible.builtin.command:
@@ -264,7 +264,7 @@
   gather_facts: false
   become: true
   vars:
-    satellite_password: "{{ lookup('ansible.builtin.env', 'SATELLITE_PASSWORD') | default(lookup('ansible.builtin.env', 'BASTION_PASSWORD'), true) }}"
+    satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
   tasks:
     - name: Verify openssl upgraded on rhel2
       ansible.builtin.command:
