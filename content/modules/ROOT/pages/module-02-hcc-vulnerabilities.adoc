@@ -77,7 +77,7 @@ Here is an explanation of the items in the summary bar: +
 The default view also applies a number of filters.
 
 .Vulnerability Filters
-image::LB1141_M02_03.png[link=self, window=blank, width=100%]
+image::LB1141_M02_03-2.png[link=self, window=blank, width=100%]
 
 
 * The first filter chips show you only CVEs that affect `1 or more systems` in your infrastructure.  This could be a Conventional (RPM-DNF based) system or an Immutable (OSTree based) system.  
@@ -102,7 +102,7 @@ SecOps has asked for a report of how many systems are impacted by `CVE-2025-4345
 In the previous section you left off where you were viewing the default filters.
 
 .Vulnerability Filters
-image::LB1141_M02_03.png[link=self, window=blank, width=100%]
+image::LB1141_M02_03-2.png[link=self, window=blank, width=100%]
 
 From the vulnerability page the default filter is `CVE`. + 
 You can type the CVE number in the search box OR even a common search term that might be present in the CVE description like `GTK`.   +
@@ -283,7 +283,7 @@ Locate the CVE filter and click it - this will provide you a list of items you c
 When selected this should look like the image below.
 
 .CVE Severity Filter
-image::LB1141_M02_06.png[link=self, window=blank, width=100%]
+image::LB1141_M02_06-2.png[link=self, window=blank, width=100%]
 
 NOTE: You may need to click outside of the filter box to get it to close.
 
