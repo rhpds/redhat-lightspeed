@@ -96,7 +96,7 @@ Combining these two filters together means that the initial focus is on CVEs tha
 
 As you’re logged into Red Hat Lightspeed, an urgent instant message arrives from the Infinicorp Security Operations (SecOps) team.  +
 
-SecOps was just made aware of https://access.redhat.com/errata/RHSA-2025:22790[RHSA-2025:22790^] which is a vulnerability that affects WebKitGTK. As many as 18 CVEs are associated with this patch and SecOps wants to know if we have any systems with this vulnerability.  There are multiple CVEs on this issue, one such CVE number is   `CVE-2025-43458`.
+SecOps is putting a high prioirty on https://access.redhat.com/errata/RHSA-2025:22790[RHSA-2025:22790^] which is a vulnerability that affects WebKitGTK. As many as 18 CVEs are associated with this patch and SecOps wants to know if there are any systems with this vulnerability.  There are multiple CVEs on this issue, one such CVE number is   `CVE-2025-43458`.
 SecOps has asked for a report of how many systems are impacted by `CVE-2025-43458` as soon as possible. 
 
 In the previous section you left off where you were viewing the default filters.
@@ -200,40 +200,49 @@ Reminder: your system name is: `rhel-{guid}-1` +
 You can add this fix to an existing plan or you can create a new plan.  You should create a new remediation plan. +
    
 [start=3]
-3. Name your plan: *43458 fix {guid}*
+3. Name your plan: 
+
+[source,js]
+----
+43458 fix {guid}
+----
 
 Reminder: your system name is: `rhel-{guid}-1`
 
-NOTE: If you do not click the Create new plan dropdown, the "Create Plan" button will not become available.  + Please name the playbook as shown above. This will help with automated cleanup tasks.  
+[start=4]
+4. Underneath the Plan name, click the dropdown that says:
+*Create new plan "43458 fix {guid}"*
+
+NOTE: If you do not click the Create new plan dropdown, the "Create Plan" button will not become available.  Please name the playbook as shown above. This will help with automated cleanup tasks.  
 
 The Plan summary assigns a point value to the remediation plan.  This remediation capability is pretty basic compared to something like Ansible Automation Platform, and this plan summary keeps the plan from getting so complicated that Red Hat Lightspeed can't relaibly remediate.  The remediation tools cap you at 100 systems and 1000 action points.  
 
-You are also given the option to download a preview of the playbook if you desire. 
+You are also given the option to download a preview of the playbook if you desire, but you will do this in a few moments. 
 
-[start=4]
-4. Click `Create plan`. +
+[start=5]
+5. Click `Create plan`. +
 
-5. You will be redirected to the Automation Toolkit --> Remediations Plans section of the Hybrid Cloud Console.  Your plan will be open. +
-The `Planned remediation` tab will list the fixes for the issues you selected and let you know if a reboot is required.  +
+6. You will be automatically redirected to the Automation Toolkit --> Remediations Plans section of the Hybrid Cloud Console.  Your plan will be open. +
+The `Planned remediation` tab will list the Actions the plan will address for the systems you selected and let you know if a reboot is required.  +
 
 From the remediations page, while looking at your remediation plan you created, you have a couple of options in the upper right. +
 The `Execute` button is unavailable.  Your user in this lab does not have permission to execute remediation.  No user gets this permission by default - it has to be explicitly provided. +
-*With so many people taking this lab at the same time we have opted to not enable this feature.*  +
-We do have an interactive demo that can show you how this works, end to end that will be at the end of this module. +
 
-[start=6]
-6. Click the Download button. +
+Note: Due to the high volume of concurrent participants taking this lab, this feature is not enabled. However, an interactive demo showcasing the complete end-to-end workflow is available at the end of this module.
+
+[start=7]
+7. Click the Download button. +
 The playbook is downloaded via your browser.  
 
-NOTE: The exact steps may vary per browser, in chrome you click "save" to save the file. 
+NOTE: The exact steps may vary per browser, in chrome you click "Save" to save the file. 
 
 To view the playbook you will need to locate the downloaded file then open the .yml file in a text editor.
 
 This playbook can help simplify the resolution of this issue - you could easily adapt this to run via ansible automation or sync this playbook with Ansible Automation Platform (AAP) - this is covered in the AAP documentation but we are not covering it in this lab. +
 
 
-[start=7]
-7. Close the playbook and return to the Hybrid Cloud Console browser window.
+[start=8]
+8. Close the playbook and return to the Hybrid Cloud Console browser window.
 
 Now that you have both the list of systems affected by CVE-2025-43458 and a remediation playbook you send those back to your SecOps team for their review. + 
 With that urgent task taken care of, let’s go ahead and return to the original task of seeing what CVEs need addressed on the RHEL 9.7 host. +
@@ -291,23 +300,22 @@ In the image below there are 481 critical or important CVEs with errata on the h
 image::LB1141_M02_07.png[lb1187_M2_CVE_w_errata,85%,85%] 
 
 
-The GTK issue we identified earlier is responsible for all of these CVEs, so addressing that will handle the bulk of the issues.  +
-
 Compared to scanners like Nessus and Crowdstrike this is a more narrow picture of vulnerabilities. +
 Remember that the default filters focus on things you can fix - as a result you’re only looking at CVEs that have errata.  Ones that you can do something about.  To get a full picture you need to see CVEs both with and without errata.  This will help you identify CVEs that may come up on SecOps scanning tools, but that you cannot fix in this version of RHEL.
 
 
 [start=9]
-9. Now - click the `x` to the right of the `Advisory: Available` filter chip to remove it.   +
+9. Click the `x` to the right of the `Advisory: Available` filter chip to remove it.   +
 This will show you all CVEs in the database that affect this system - with and without advisories. +
 
 10. Look again at the number of CVEs - the number is significantly larger!
 
-In the image below there are 743 critical or important CVEs when looking at the full picture - these are CVEs with and without errata.  Having this information gives you a full view of all of the issues that affect your RHEL hosts - the ones you can fix as well as the ones you can’t.
+In the image below there are 743 critical or important CVEs when looking at the full picture - these are CVEs with and without errata.  Having this information gives you a full view of all of the issues that affect your RHEL hosts - the ones you can fix as well as the ones you can’t.  
 
 .Critical or Important CVEs with or without errata
 image::LB1141_M02_07.5.png[lb1187_M2_CVE_wo_errata,85%,85%] 
 
+Note: Like before the exact number that you see may differ from the screenshot.  That is expected.
 
 The advisory column will tell you if the CVE has an advisory available to resolve the CVE.  
 
@@ -337,13 +345,13 @@ There are three types of reports - an executive report, a customizable CVE repor
 2. Start with the executive report - click `Download PDF`. +
 The PDF file will be downloaded via your browser.   +
 
-NOTE: It may take a moment for the report to be generated. The report is downloaded via your browser.  The exact steps may vary per browser, in chrome you click `save` to save the file. 
+NOTE: It may take a moment for the report to be generated. The report is downloaded via your browser.  The exact steps may vary per browser, in chrome you click `Save` to save the file. 
 
 [start=3]
 3. Locate and open the report. +
 The executive report shows you a summary of the systems, CVEs, and security rules. +
 The report then breaks down the CVEs by CVSS (Common Vulnerability Scoring System) score, identifies the top 3 CVEs in your environment, and the top 3 security rules. +
-This is a nice pre canned report that you can send to your management or SecOps team.  +
+This is a nice pre-canned report that you can send to your management or SecOps team.  +
 4. Close the report and return to the reports page of the Hybrid Cloud Console. +
 
 (Move onto the next section, but don’t leave this page.) +
@@ -375,7 +383,7 @@ The PDF file will be downloaded via your browser.
 3. Locate and open the report. +
 This report will show you the information that you selected - in this case all CVEs with a CVSS base score between 6.0 and 10 within the last 90 days. +
 
-NOTE: It may take a moment for the report to be generated. The report is downloaded via your browser.  The exact steps may vary per browser, in chrome you click `save` to save the file. 
+NOTE: It may take a moment for the report to be generated. The report is downloaded via your browser.  The exact steps may vary per browser, in chrome you click `Save` to save the file. 
 
 [start=4]
 4. When finished reviewing, close the report and return to the Hybrid Cloud Console.
@@ -389,8 +397,8 @@ NOTE: It may take a moment for the report to be generated. The report is downloa
 [%collapsible]
 ====
 
-Infinicorp wants to know the benefits of moving older versions of RHEL to newer versions in terms of the number of Vulnerabilities known for the minor release.  
-Their current RHEL 9 deployments tend to be on the latest version or on one of the Extended Update Support (EUS) versions of RHEL - typically 9.2 or 9.4. 
+Infinicorp wants to know the benefits of moving older versions of RHEL to newer versions in terms of the number of vulnerabilities known for the minor release.  
+Their current RHEL 9 deployments tend to be on the latest version or on one of the Extended Update Support (EUS) versions of RHEL - typically 9.6 or 9.4. 
 
 This report will provide you a breakdown of vulnerabilities affecting the minor operating system versions of your RHEL systems.  
 
@@ -400,7 +408,7 @@ This opens a window where you can identify what you want the report to contain. 
 [start=2]
 2. Complete the report wizard +
 * If desired you can change the `Report title`.
-* Select `RHEL 9.7`, `RHEL 9.4` and `RHEL 9.2` 
+* Select `RHEL 9.7`, `RHEL 9.6` and `RHEL 9.4` 
 +
 NOTE: You can only compare within the same major version of RHEL.  With RHEL 9.x selected you cannot select another major version of RHEL to compare.
 +
@@ -410,7 +418,7 @@ NOTE: You can only compare within the same major version of RHEL.  With RHEL 9.x
 * You can export to PDF or CSV.  Click `Export PDF`.
 * The report will be downloaded via your browser.
 
-NOTE: It may take a moment for the report to be generated. The report is downloaded via your browser.  The exact steps may vary per browser, in chrome you click `save` to save the file. 
+NOTE: It may take a moment for the report to be generated. The report is downloaded via your browser.  The exact steps may vary per browser, in chrome you click `Save` to save the file. 
 
 [start=3]
 3. Locate and open the report.
