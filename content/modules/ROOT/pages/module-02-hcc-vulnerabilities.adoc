@@ -202,7 +202,7 @@ You can add this fix to an existing plan or you can create a new plan.  You shou
 [start=3]
 3. Name your plan: 
 
-[source,js]
+[source,js,subs="attributes+"]
 ----
 43458 fix {guid}
 ----
