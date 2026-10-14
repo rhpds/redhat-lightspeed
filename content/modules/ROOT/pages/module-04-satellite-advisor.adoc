@@ -14,7 +14,7 @@ Infinicorp has provided you with a preconfigured Red Hat Satellite 6.19 server a
 
 In this environment your first task is to review the Satellite connected 10.1 host to see if there are any recommendations to improve the reliability, performance, or security of the host. 
 
-== Host recommendations with Red Hat Lightspeed in Satellite - 
+== Host recommendations with Red Hat Lightspeed in Satellite
 
 Satellite has been preinstalled and installation and configuration of Lightspeed in Satellite is out of scope for this lab.
 
@@ -49,7 +49,7 @@ Running the insights-client command will collect and upload data to Satellite wh
 .Output of insights-client command
 image::LB1141_M04_00.png[link=self, window=blank, width=100%]
 
-NOTE: The insights-client will still include output information as if it is connected to console.redhat.com. No information is actually sent to the Hybrid Cloud Console.
+NOTE: The insights-client will refer to uploading data and a report.  This data/report is uploaded to the Satellite server. No information is sent to the Hybrid Cloud Console.
 
 Do not move onto the next step until the operation is complete and you are returned back to the terminal prompt as shown in the image above. 
 ====
@@ -120,7 +120,7 @@ You should already be in the Recommendations section.  If not, in the Web UI exp
 
 Red Hat Lightspeed has found a recommendation that affects system security.  It has detected that the OpenSSH ClientAlive settings are not in line with security best practices. +
 
-Notice that Red Hat Lightspeed gives you a `Category` type of security.  +
+Notice that Red Hat Lightspeed gives you a `Category` type of `Security`.  +
 Possible options are: 
 
 * Availability
