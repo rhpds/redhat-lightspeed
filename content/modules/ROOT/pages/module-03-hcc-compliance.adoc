@@ -80,7 +80,7 @@ NOTE: SCAP policies have dependencies on the version of RHEL.  Notice the `Suppo
 7. Click Next.
 8. Provide a policy name of:
 
-[source,js]
+[source,js,subs="attributes+"]
 ----
 {guid} CIS L1 Server Policy
 ----
@@ -282,7 +282,7 @@ Selecting a rule will enable the `Plan remediation` button.
 This will open the `Plan a remediation` wizard.
 9. Name your playbook: 
 
-[source,js]
+[source,js,subs="attributes+"]
 ----
 {guid} compliance fix
 ----
