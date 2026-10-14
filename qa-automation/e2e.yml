@@ -7,7 +7,7 @@
 # Module order:
 #   01-overview          → skip (informational)
 #   02-hcc-vulnerabilities → validate only (HCC UI — no automation possible)
-#   03-hcc-compliance    → solve (insights-client --compliance) + validate
+#   03-hcc-compliance    → solve (insights-client + --compliance) + validate
 #   04-satellite-advisor → solve (insights-client + remediate OpenSSH) + validate
 #   05-satellite-vulnerability → solve (apply errata RHSA-2026:1472) + validate
 #   06-recap             → skip (informational)
@@ -56,14 +56,25 @@
 # ── Module 03: HCC Compliance ───────────────────────────────────────
 # Student action: create SCAP policy on HCC (UI), run insights-client
 #   --compliance on rhel1.lab (terminal), review report on HCC (UI)
-# Solve: run the compliance scan (generates real HCC load, 1-5 min)
+# Solve: run insights-client (upload to HCC) then compliance scan
 # Validate: scan completed and data uploaded
 
-- name: "Module 03 - Solve: Run OpenSCAP compliance scan on rhel1.lab"
+- name: "Module 03 - Solve: Upload Insights data and run compliance scan on rhel1.lab"
   hosts: satellite
   gather_facts: false
   become: true
   tasks:
+    - name: Run insights-client on rhel1.lab (HCC data upload — generates Akamai-bound load)
+      ansible.builtin.command:
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab insights-client
+      register: _rhel1_insights_upload
+      timeout: 300
+      changed_when: true
+
+    - name: Show insights-client upload output
+      ansible.builtin.debug:
+        msg: "{{ _rhel1_insights_upload.stdout_lines | default([]) }}"
+
     - name: Run insights-client --compliance on rhel1.lab
       ansible.builtin.command:
         cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab insights-client --compliance
@@ -322,7 +333,7 @@
         msg:
           - "=== E2E Run Complete ==="
           - "Module 02 (HCC Vulnerabilities): VALIDATED — rhel1.lab registered to Insights"
-          - "Module 03 (HCC Compliance): SOLVED — compliance scan ran on rhel1.lab"
+          - "Module 03 (HCC Compliance): SOLVED — insights-client upload + compliance scan ran on rhel1.lab"
           - "Module 04 (Satellite Advisor): SOLVED — OpenSSH recommendation remediated on rhel2.lab"
           - "Module 05 (Satellite Vulnerability): SOLVED — RHSA-2026:1472 applied, openssl upgraded on rhel2.lab"
           - "Modules 01, 06: SKIPPED — informational only"

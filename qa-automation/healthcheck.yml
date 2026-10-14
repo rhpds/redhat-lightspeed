@@ -4,6 +4,7 @@
 # Verifies:
 #   - Satellite host is reachable and services are operational
 #   - RHEL target hosts (rhel1.lab, rhel2.lab) are reachable from satellite
+#   - HCC/Akamai connectivity from rhel1.lab (catches conference WiFi blocks)
 #   - Module 02/03 preconditions: rhel1.lab registered to Insights (HCC connected)
 #   - Module 04/05 preconditions: rhel2.lab registered in Satellite, advisor
 #     recommendation present, CVE baseline (vulnerable openssl), errata available
@@ -88,6 +89,50 @@
         cmd: ssh -o StrictHostKeyChecking=no root@rhel2.lab hostname
       changed_when: false
       timeout: 15
+
+- name: Healthcheck - HCC/Akamai connectivity from rhel1.lab
+  hosts: satellite
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Verify DNS resolution for cert-api.access.redhat.com from rhel1.lab
+      ansible.builtin.command:
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab host cert-api.access.redhat.com
+      register: _hcc_dns
+      changed_when: false
+      failed_when: _hcc_dns.rc != 0
+      timeout: 15
+
+    - name: Log HCC DNS resolution
+      ansible.builtin.debug:
+        msg: "{{ _hcc_dns.stdout }}"
+
+    - name: Verify HTTPS connectivity to Insights upload endpoint (Akamai)
+      ansible.builtin.command:
+        cmd: >-
+          ssh -o StrictHostKeyChecking=no root@rhel1.lab
+          curl -sk -o /dev/null -w '%{http_code}' --max-time 15
+          https://cert-api.access.redhat.com/r/insights/
+      register: _hcc_https
+      changed_when: false
+      failed_when: _hcc_https.stdout not in ['200', '401', '403', '405', '301', '302']
+      timeout: 30
+
+    - name: Log HCC/Akamai HTTPS status
+      ansible.builtin.debug:
+        msg: "Insights upload endpoint returned HTTP {{ _hcc_https.stdout }} (non-block = healthy)"
+
+    - name: Verify DNS resolution for console.redhat.com from rhel1.lab
+      ansible.builtin.command:
+        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab host console.redhat.com
+      register: _console_dns
+      changed_when: false
+      failed_when: _console_dns.rc != 0
+      timeout: 15
+
+    - name: Log console.redhat.com DNS resolution
+      ansible.builtin.debug:
+        msg: "{{ _console_dns.stdout }}"
 
 - name: Healthcheck - Module 02/03 preconditions (HCC connected environment)
   hosts: satellite
