@@ -5,7 +5,7 @@
 #   - Satellite host is reachable and services are operational
 #   - RHEL target hosts are reachable from satellite (ping)
 #   - SSH to rhel2 works (satellite-managed, key auth)
-#   - HCC/Akamai connectivity verified via satellite curl to API endpoints
+#   - HCC/Akamai connectivity verified via curl to Red Hat API endpoints
 #   - Module 04/05 preconditions: rhel2 registered in Satellite, advisor
 #     recommendation present, CVE baseline (vulnerable openssl), errata available
 #   - Wetty terminals are accessible
@@ -93,19 +93,7 @@
   gather_facts: false
   become: true
   tasks:
-    - name: Verify DNS resolution for cert-api.access.redhat.com
-      ansible.builtin.command:
-        cmd: getent hosts cert-api.access.redhat.com
-      register: _hcc_dns
-      changed_when: false
-      failed_when: _hcc_dns.rc != 0
-      timeout: 15
-
-    - name: Log HCC DNS resolution
-      ansible.builtin.debug:
-        msg: "{{ _hcc_dns.stdout }}"
-
-    - name: Verify HTTPS connectivity to Insights upload endpoint (Akamai)
+    - name: Verify connectivity to Insights upload endpoint (cert-api.access.redhat.com)
       ansible.builtin.command:
         cmd: >-
           curl -sk -o /dev/null -w '%{http_code}' --max-time 15
@@ -115,21 +103,23 @@
       failed_when: _hcc_https.stdout not in ['200', '401', '403', '405', '301', '302']
       timeout: 30
 
-    - name: Log HCC/Akamai HTTPS status
+    - name: Log Insights endpoint status
       ansible.builtin.debug:
-        msg: "Insights upload endpoint returned HTTP {{ _hcc_https.stdout }} (non-block = healthy)"
+        msg: "cert-api.access.redhat.com returned HTTP {{ _hcc_https.stdout }} (non-block = healthy)"
 
-    - name: Verify DNS resolution for console.redhat.com
+    - name: Verify connectivity to Hybrid Cloud Console (console.redhat.com)
       ansible.builtin.command:
-        cmd: getent hosts console.redhat.com
-      register: _console_dns
+        cmd: >-
+          curl -sk -o /dev/null -w '%{http_code}' --max-time 15
+          https://console.redhat.com/
+      register: _console_https
       changed_when: false
-      failed_when: _console_dns.rc != 0
-      timeout: 15
+      failed_when: _console_https.stdout not in ['200', '301', '302', '403']
+      timeout: 30
 
-    - name: Log console.redhat.com DNS resolution
+    - name: Log HCC console status
       ansible.builtin.debug:
-        msg: "{{ _console_dns.stdout }}"
+        msg: "console.redhat.com returned HTTP {{ _console_https.stdout }} (non-block = healthy)"
 
 - name: Healthcheck - Module 04/05 preconditions (Satellite disconnected environment)
   hosts: satellite
