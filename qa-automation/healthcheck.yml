@@ -14,8 +14,10 @@
 # Should complete in under 90 seconds.
 #
 # NOTE: On freshly deployed environments, Lightspeed data checks (cvemap.xml,
-# advisor recommendations) may fail. Wait 15-20 minutes after provisioning
-# for Lightspeed containers to fully process data, then re-run.
+# advisor recommendations, Insights API) may warn. Wait 15-20 minutes after
+# provisioning for Lightspeed containers to fully initialize, then re-run.
+# If the Insights API returns 404, the foreman_rh_cloud plugin may not be
+# enabled — this requires Satellite admin intervention.
 #
 # Env vars injected by ZT runner:
 #   BASTION_HOST, BASTION_PORT, BASTION_USER, BASTION_PASSWORD, GUID, DOMAIN
@@ -154,23 +156,32 @@
           Module 05 (vulnerability remediation) will not work without it.
       when: not r_cvemap.stat.exists
 
-    - name: Verify Lightspeed advisor has recommendations
+    - name: Check Lightspeed advisor API availability
       ansible.builtin.uri:
         url: https://localhost/api/v2/insights_hosts
         validate_certs: false
         user: admin
         password: "{{ satellite_password }}"
         force_basic_auth: true
-        status_code: 200
+        status_code: [200, 404]
         return_content: true
       register: _insights_hosts
       changed_when: false
 
+    - name: "WARNING: Insights API not available (foreman_rh_cloud plugin not enabled)"
+      ansible.builtin.debug:
+        msg: >-
+          /api/v2/insights_hosts returned 404. The foreman_rh_cloud plugin is not
+          enabled in Satellite. Lightspeed containers are running (podman ps) but
+          Foreman cannot communicate with them. Modules 04/05 will not work.
+          This requires Satellite admin intervention to enable the plugin.
+      when: _insights_hosts.status == 404
+
     - name: Check Lightspeed host data count
       ansible.builtin.set_fact:
-        _insights_total: "{{ _insights_hosts.json.total | default(0) | int }}"
+        _insights_total: "{{ (_insights_hosts.json.total | default(0) | int) if _insights_hosts.status == 200 else 0 }}"
 
-    - name: "WARNING: No Lightspeed data yet (expected on fresh environments)"
+    - name: "WARNING: No Lightspeed data yet (run insights-client on rhel2 first)"
       ansible.builtin.debug:
         msg: >-
           No hosts with Lightspeed data found in Satellite (total={{ _insights_total }}).
@@ -178,6 +189,17 @@
           then wait 10-15 minutes for Lightspeed containers to process the data.
           Modules 04/05 will not work without this.
       when: (_insights_total | int) < 1
+
+    - name: Verify Lightspeed containers are running
+      ansible.builtin.command:
+        cmd: podman ps --format '{{ '{{' }}.Names{{ '}}' }}' --filter name=iop-
+      register: _lightspeed_containers
+      changed_when: false
+      timeout: 15
+
+    - name: Log Lightspeed container count
+      ansible.builtin.debug:
+        msg: "Lightspeed containers running: {{ _lightspeed_containers.stdout_lines | length }}"
 
     - name: Verify vulnerable openssl baseline on rhel2
       ansible.builtin.command:
