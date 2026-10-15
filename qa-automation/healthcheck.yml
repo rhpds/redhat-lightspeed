@@ -1,0 +1,144 @@
+---
+# HEALTHCHECK — Environment readiness for event use (Red Hat Lightspeed lab LB1141)
+#
+# Verifies:
+#   - Satellite host is reachable and services are operational
+#   - RHEL target hosts are reachable from satellite
+#   - SSH to rhel2 works (satellite-managed, key auth)
+#   - HCC/Akamai connectivity from satellite
+#   - Lightspeed containers are running
+#
+# Non-destructive: does not modify any lab state.
+# Should complete in under 60 seconds.
+#
+# Env vars injected by ZT runner:
+#   BASTION_HOST, BASTION_PORT, BASTION_USER, BASTION_PASSWORD, GUID, DOMAIN
+#
+# Exit 0 = healthy, non-zero = unhealthy.
+
+- name: Build inventory
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Add satellite host (bastion)
+      ansible.builtin.add_host:
+        name: satellite
+        ansible_ssh_host: "{{ lookup('ansible.builtin.env', 'BASTION_HOST') }}"
+        ansible_ssh_port: "{{ lookup('ansible.builtin.env', 'BASTION_PORT') | default('22', true) }}"
+        ansible_ssh_user: "{{ lookup('ansible.builtin.env', 'BASTION_USER') }}"
+        ansible_ssh_pass: "{{ lookup('ansible.builtin.env', 'BASTION_PASSWORD') }}"
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+        groups: satellite
+
+- name: Healthcheck - Satellite host
+  hosts: satellite
+  gather_facts: false
+  become: true
+  vars:
+    satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
+  tasks:
+    - name: Verify SSH connectivity
+      ansible.builtin.ping:
+
+    - name: Verify Satellite services are running
+      ansible.builtin.command:
+        cmd: hammer ping
+      changed_when: false
+      timeout: 30
+
+    - name: Verify Satellite Web UI is responding
+      ansible.builtin.uri:
+        url: https://localhost/users/login
+        validate_certs: false
+        status_code: [200, 302]
+      changed_when: false
+
+    - name: Verify Satellite API is responding
+      ansible.builtin.uri:
+        url: https://localhost/api/v2/status
+        validate_certs: false
+        user: admin
+        password: "{{ satellite_password }}"
+        force_basic_auth: true
+        status_code: 200
+      changed_when: false
+
+- name: Healthcheck - RHEL hosts reachable from satellite
+  hosts: satellite
+  gather_facts: false
+  become: true
+  vars:
+    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
+    rhel1: "rhel-{{ guid }}-1"
+    rhel2: "rhel-{{ guid }}-2"
+  tasks:
+    - name: Verify rhel1 is reachable (ping only — no SSH from satellite)
+      ansible.builtin.command: "ping -c 1 -W 5 {{ rhel1 }}"
+      changed_when: false
+
+    - name: Verify rhel2 is reachable (ping)
+      ansible.builtin.command: "ping -c 1 -W 5 {{ rhel2 }}"
+      changed_when: false
+
+    - name: Verify SSH to rhel2 (satellite-managed, key auth)
+      ansible.builtin.command:
+        cmd: "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }} hostname"
+      changed_when: false
+      timeout: 30
+
+- name: Healthcheck - HCC/Akamai connectivity (from satellite)
+  hosts: satellite
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Verify connectivity to Insights upload endpoint (cert-api.access.redhat.com)
+      ansible.builtin.command:
+        cmd: >-
+          curl -sk -o /dev/null -w '%{http_code}' --max-time 15
+          https://cert-api.access.redhat.com/r/insights/
+      register: _hcc_https
+      changed_when: false
+      failed_when: _hcc_https.stdout not in ['200', '401', '403', '405', '301', '302']
+      timeout: 30
+
+    - name: Log Insights endpoint status
+      ansible.builtin.debug:
+        msg: "cert-api.access.redhat.com returned HTTP {{ _hcc_https.stdout }} (non-block = healthy)"
+
+    - name: Verify connectivity to Hybrid Cloud Console (console.redhat.com)
+      ansible.builtin.command:
+        cmd: >-
+          curl -sk -o /dev/null -w '%{http_code}' --max-time 15
+          https://console.redhat.com/
+      register: _console_https
+      changed_when: false
+      failed_when: _console_https.stdout not in ['200', '301', '302', '403']
+      timeout: 30
+
+    - name: Log HCC console status
+      ansible.builtin.debug:
+        msg: "console.redhat.com returned HTTP {{ _console_https.stdout }} (non-block = healthy)"
+
+- name: Healthcheck - Lightspeed containers running
+  hosts: satellite
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Check Lightspeed (IOP) containers
+      ansible.builtin.command:
+        cmd: podman ps --format '{{ '{{' }}.Names{{ '}}' }}' --filter name=iop-
+      register: _iop_containers
+      changed_when: false
+      timeout: 15
+
+    - name: Verify Lightspeed containers are running
+      ansible.builtin.assert:
+        that:
+          - _iop_containers.stdout_lines | length >= 10
+        fail_msg: >-
+          Only {{ _iop_containers.stdout_lines | length }} Lightspeed containers running
+          (expected 10+). Containers: {{ _iop_containers.stdout_lines | join(', ') }}
+
+    - name: Log Lightspeed container count
+      ansible.builtin.debug:
+        msg: "Lightspeed containers running: {{ _iop_containers.stdout_lines | length }} ({{ _iop_containers.stdout_lines | join(', ') }})"

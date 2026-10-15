@@ -1,0 +1,122 @@
+---
+# E2E — Replay automatable student actions (Red Hat Lightspeed lab LB1141)
+#
+# Modules 01-03, 06: SKIPPED (informational or HCC browser-only)
+# Module 04: Run insights-client on rhel2 (generates Lightspeed advisor data)
+# Module 05: Apply errata RHSA-2026:1472 to rhel2, validate openssl upgraded
+#
+# Env vars injected by ZT runner:
+#   BASTION_HOST, BASTION_PORT, BASTION_USER, BASTION_PASSWORD, GUID, DOMAIN
+#
+# Exit 0 = all modules pass, non-zero = first failure stops the run.
+
+- name: Build inventory
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Add satellite host (bastion)
+      ansible.builtin.add_host:
+        name: satellite
+        ansible_ssh_host: "{{ lookup('ansible.builtin.env', 'BASTION_HOST') }}"
+        ansible_ssh_port: "{{ lookup('ansible.builtin.env', 'BASTION_PORT') | default('22', true) }}"
+        ansible_ssh_user: "{{ lookup('ansible.builtin.env', 'BASTION_USER') }}"
+        ansible_ssh_pass: "{{ lookup('ansible.builtin.env', 'BASTION_PASSWORD') }}"
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+        groups: satellite
+
+# ── Module 04: Run insights-client on rhel2 ─────────────────────────
+# Student runs insights-client to generate Lightspeed advisor data.
+# Remediation is done via the Satellite UI (not automatable via hammer).
+
+- name: "Module 04 - Run insights-client on rhel2"
+  hosts: satellite
+  gather_facts: false
+  become: true
+  vars:
+    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
+    rhel2: "rhel-{{ guid }}-2"
+  tasks:
+    - name: Run insights-client on rhel2
+      ansible.builtin.command:
+        cmd: "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }} insights-client"
+      register: _insights_run
+      timeout: 300
+      changed_when: true
+
+    - name: Show insights-client output
+      ansible.builtin.debug:
+        msg: "{{ _insights_run.stdout_lines | default([]) }}"
+
+    - name: Wait for Lightspeed containers to process data
+      ansible.builtin.pause:
+        seconds: 30
+
+# ── Module 05: Apply errata for CVE-2025-15467 ────────────────────
+# Student applies RHSA-2026:1472 via Satellite UI Content tab.
+# We automate via hammer job-invocation (Satellite 6.19+ requires REX).
+
+- name: "Module 05 - Apply errata RHSA-2026:1472"
+  hosts: satellite
+  gather_facts: false
+  become: true
+  vars:
+    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
+    rhel2: "rhel-{{ guid }}-2"
+    rhel2_satellite: "rhel-{{ guid }}-2.lab"
+  tasks:
+    - name: Record pre-patch openssl version on rhel2
+      ansible.builtin.command:
+        cmd: "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }} rpm -q openssl"
+      register: _pre_openssl
+      changed_when: false
+
+    - name: Log pre-patch openssl
+      ansible.builtin.debug:
+        msg: "rhel2 openssl before: {{ _pre_openssl.stdout }}"
+
+    - name: Apply errata RHSA-2026:1472 via remote execution
+      ansible.builtin.command:
+        cmd: >-
+          hammer job-invocation create
+          --feature katello_errata_install
+          --search-query "name = {{ rhel2_satellite }}"
+          --inputs "errata=RHSA-2026:1472"
+      register: _errata_apply
+      timeout: 300
+      changed_when: true
+
+    - name: Show errata apply output
+      ansible.builtin.debug:
+        msg: "{{ _errata_apply.stdout_lines | default([]) }}"
+
+    - name: Wait for errata installation to complete
+      ansible.builtin.pause:
+        seconds: 90
+
+- name: "Module 05 - Validate: openssl upgraded"
+  hosts: satellite
+  gather_facts: false
+  become: true
+  vars:
+    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
+    rhel2: "rhel-{{ guid }}-2"
+  tasks:
+    - name: Check openssl version on rhel2
+      ansible.builtin.command:
+        cmd: "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }} rpm -q openssl"
+      register: _post_openssl
+      changed_when: false
+
+    - name: Verify openssl was upgraded
+      ansible.builtin.assert:
+        that:
+          - _post_openssl.stdout != _pre_openssl.stdout
+        fail_msg: "openssl was NOT upgraded — still at {{ _post_openssl.stdout }}"
+
+    - name: E2E Summary
+      ansible.builtin.debug:
+        msg:
+          - "=== E2E Run Complete ==="
+          - "Module 04: insights-client ran on rhel2 (advisor data generated)"
+          - "Module 05: RHSA-2026:1472 applied, openssl {{ _pre_openssl.stdout }} → {{ _post_openssl.stdout }}"
+          - "Modules 01-03, 06: SKIPPED (informational or HCC browser-only)"
