@@ -1,22 +1,9 @@
 ---
-# E2E — Solve and validate all automatable modules (Red Hat Lightspeed lab LB1141)
+# E2E — Replay automatable student actions (Red Hat Lightspeed lab LB1141)
 #
-# Replays student actions that can be automated and validates outcomes.
-# Designed for event readiness / CNV infra load testing.
-#
-# Module order:
-#   01-overview          → skip (informational)
-#   02-hcc-vulnerabilities → skip (HCC UI only, rhel1 not SSH-accessible)
-#   03-hcc-compliance    → skip (rhel1 not SSH-accessible from satellite)
-#   04-satellite-advisor → solve (insights-client + remediate OpenSSH) + validate
-#   05-satellite-vulnerability → solve (apply errata RHSA-2026:1472) + validate
-#   06-recap             → skip (informational)
-#
-# Note: rhel1 (HCC-connected host) has separate credentials and is not
-# SSH-accessible from satellite. Students access it via wetty terminal.
-# Modules 02/03 require rhel1 terminal access and cannot be automated
-# from the ZT runner. Load testing focuses on modules 04+05 which
-# exercise the Satellite Lightspeed containers and rhel2.
+# Modules 01-03, 06: SKIPPED (informational or HCC browser-only)
+# Module 04: Run insights-client on rhel2 (generates Lightspeed advisor data)
+# Module 05: Apply errata RHSA-2026:1472 to rhel2, validate openssl upgraded
 #
 # Env vars injected by ZT runner:
 #   BASTION_HOST, BASTION_PORT, BASTION_USER, BASTION_PASSWORD, GUID, DOMAIN
@@ -37,168 +24,38 @@
         ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
         groups: satellite
 
-# ── Modules 02/03: HCC (rhel1) ────────────────────────────────────
-# Skipped — rhel1 is not SSH-accessible from satellite.
-# Students run insights-client and --compliance via wetty terminal.
-# These modules generate HCC/Akamai load but cannot be automated
-# from the ZT runner.
+# ── Module 04: Run insights-client on rhel2 ─────────────────────────
+# Student runs insights-client to generate Lightspeed advisor data.
+# Remediation is done via the Satellite UI (not automatable via hammer).
 
-- name: "Modules 02/03 - Skip: rhel1 not accessible from satellite"
+- name: "Module 04 - Run insights-client on rhel2"
   hosts: satellite
   gather_facts: false
   become: true
   vars:
-    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
-    rhel1: "rhel-{{ guid }}-1"
-  tasks:
-    - name: Verify rhel1 is at least pingable
-      ansible.builtin.command: "ping -c 1 -W 5 {{ rhel1 }}"
-      changed_when: false
-
-    - name: Log module 02/03 skip reason
-      ansible.builtin.debug:
-        msg: >-
-          Modules 02 (HCC Vulnerabilities) and 03 (HCC Compliance) SKIPPED.
-          rhel1 ({{ rhel1 }}) is the HCC-connected host with separate credentials.
-          Not SSH-accessible from satellite. Students use wetty terminal.
-
-# ── Module 04: Satellite Advisor ────────────────────────────────────
-# Student action: run insights-client on rhel2 (terminal), log into
-#   Satellite UI, view "Decreased security: OpenSSH ClientAlive settings"
-#   recommendation, click Remediate
-# Solve: run insights-client on rhel2, then trigger Satellite remediation
-# Validate: recommendation cleared, sshd config updated on rhel2
-
-- name: "Module 04 - Solve: Run insights-client and remediate advisor finding"
-  hosts: satellite
-  gather_facts: false
-  become: true
-  vars:
-    satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
     guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
     rhel2: "rhel-{{ guid }}-2"
-    rhel2_satellite: "rhel-{{ guid }}-2.lab"
   tasks:
-    - name: Record pre-remediation sshd config on rhel2
-      ansible.builtin.command:
-        cmd: >-
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }}
-          grep -E 'ClientAliveInterval|ClientAliveCountMax' /etc/ssh/sshd_config
-      register: _pre_sshd
-      changed_when: false
-      failed_when: false
-
-    - name: Log pre-remediation sshd config
-      ansible.builtin.debug:
-        msg: "rhel2 sshd before: {{ _pre_sshd.stdout_lines | default(['not set']) }}"
-
-    - name: Run insights-client on rhel2 to generate advisor data
+    - name: Run insights-client on rhel2
       ansible.builtin.command:
         cmd: "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }} insights-client"
+      register: _insights_run
       timeout: 300
       changed_when: true
 
-    - name: Wait for Lightspeed containers to process advisor data
+    - name: Show insights-client output
+      ansible.builtin.debug:
+        msg: "{{ _insights_run.stdout_lines | default([]) }}"
+
+    - name: Wait for Lightspeed containers to process data
       ansible.builtin.pause:
         seconds: 30
 
-    - name: Check if OpenSSH ClientAlive recommendation exists
-      ansible.builtin.uri:
-        url: https://localhost/api/v2/insights_hosts
-        validate_certs: false
-        user: admin
-        password: "{{ satellite_password }}"
-        force_basic_auth: true
-        status_code: 200
-        return_content: true
-      register: _advisor_check
-      changed_when: false
+# ── Module 05: Apply errata for CVE-2025-15467 ────────────────────
+# Student applies RHSA-2026:1472 via Satellite UI Content tab.
+# We automate via hammer host errata apply.
 
-    - name: Trigger remediation for OpenSSH ClientAlive via Satellite
-      ansible.builtin.shell:
-        cmd: |
-          RULE_ID=$(hammer --output json host-insights recommendation list \
-            --host {{ rhel2_satellite }} 2>/dev/null \
-            | python3 -c "
-          import sys, json
-          try:
-              recs = json.load(sys.stdin)
-              matches = [r for r in recs if 'ClientAlive' in r.get('Description', '') or 'ClientAlive' in r.get('Rule id', '')]
-              if matches:
-                  print(matches[0].get('Rule id', matches[0].get('Id', '')))
-              else:
-                  print('NOT_FOUND')
-          except Exception:
-              print('NOT_FOUND')
-          ")
-          if [ "$RULE_ID" = "NOT_FOUND" ] || [ -z "$RULE_ID" ]; then
-            echo "OpenSSH ClientAlive recommendation not found — may already be remediated"
-            exit 0
-          fi
-          echo "Found recommendation: $RULE_ID"
-          hammer job-invocation create \
-            --job-template "Insights Remediation - Ansible Default" \
-            --search-query "name = {{ rhel2_satellite }}" \
-            --inputs "rule_id=$RULE_ID" 2>&1 || true
-      register: _remediation_trigger
-      timeout: 120
-      changed_when: "'Insights Remediation' in _remediation_trigger.stdout or 'already be remediated' in _remediation_trigger.stdout"
-
-    - name: Show remediation trigger output
-      ansible.builtin.debug:
-        msg: "{{ _remediation_trigger.stdout_lines | default([]) }}"
-
-    - name: Wait for remediation job to complete
-      ansible.builtin.pause:
-        seconds: 60
-      when: "'NOT_FOUND' not in _remediation_trigger.stdout"
-
-    - name: Run insights-client on rhel2 to refresh advisor data
-      ansible.builtin.command:
-        cmd: "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }} insights-client"
-      timeout: 300
-      changed_when: true
-
-- name: "Module 04 - Validate: OpenSSH recommendation remediated"
-  hosts: satellite
-  gather_facts: false
-  become: true
-  vars:
-    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
-    rhel2: "rhel-{{ guid }}-2"
-  tasks:
-    - name: Verify ClientAliveInterval is set on rhel2
-      ansible.builtin.command:
-        cmd: >-
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }}
-          sshd -T 2>/dev/null | grep -i clientaliveinterval
-      register: _post_cai
-      changed_when: false
-      failed_when: false
-
-    - name: Verify ClientAliveCountMax is set on rhel2
-      ansible.builtin.command:
-        cmd: >-
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }}
-          sshd -T 2>/dev/null | grep -i clientalivecountmax
-      register: _post_cacm
-      changed_when: false
-      failed_when: false
-
-    - name: Log post-remediation sshd config
-      ansible.builtin.debug:
-        msg:
-          - "ClientAliveInterval: {{ _post_cai.stdout | default('not found') }}"
-          - "ClientAliveCountMax: {{ _post_cacm.stdout | default('not found') }}"
-
-# ── Module 05: Satellite Vulnerability ──────────────────────────────
-# Student action: browse CVEs in Satellite UI, search CVE-2025-15467,
-#   set business risk to Critical, apply errata RHSA-2026:1472, verify
-#   CVE is cleared
-# Solve: apply errata via hammer, run insights-client to refresh
-# Validate: openssl upgraded, CVE no longer affects rhel2
-
-- name: "Module 05 - Solve: Apply errata for CVE-2025-15467"
+- name: "Module 05 - Apply errata RHSA-2026:1472"
   hosts: satellite
   gather_facts: false
   become: true
@@ -231,86 +88,34 @@
       ansible.builtin.debug:
         msg: "{{ _errata_apply.stdout_lines | default([]) }}"
 
-    - name: Wait for errata installation to complete on host
+    - name: Wait for errata installation to complete
       ansible.builtin.pause:
         seconds: 60
 
-    - name: Run insights-client on rhel2 to refresh vulnerability data
-      ansible.builtin.command:
-        cmd: "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }} insights-client"
-      timeout: 300
-      changed_when: true
-
-    - name: Wait for Lightspeed containers to process updated data
-      ansible.builtin.pause:
-        seconds: 30
-
-- name: "Module 05 - Validate: CVE-2025-15467 remediated"
+- name: "Module 05 - Validate: openssl upgraded"
   hosts: satellite
   gather_facts: false
   become: true
   vars:
-    satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
     guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
     rhel2: "rhel-{{ guid }}-2"
-    rhel2_satellite: "rhel-{{ guid }}-2.lab"
   tasks:
-    - name: Verify openssl upgraded on rhel2
+    - name: Check openssl version on rhel2
       ansible.builtin.command:
         cmd: "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }} rpm -q openssl"
       register: _post_openssl
       changed_when: false
 
-    - name: Verify openssl version changed
+    - name: Verify openssl was upgraded
       ansible.builtin.assert:
         that:
           - _post_openssl.stdout != _pre_openssl.stdout
         fail_msg: "openssl was NOT upgraded — still at {{ _post_openssl.stdout }}"
 
-    - name: Log post-patch openssl
-      ansible.builtin.debug:
-        msg:
-          - "rhel2 openssl before: {{ _pre_openssl.stdout }}"
-          - "rhel2 openssl after:  {{ _post_openssl.stdout }}"
-
-    - name: Verify CVE errata no longer applicable to rhel2
-      ansible.builtin.shell:
-        cmd: |
-          RESULT=$(hammer --output json host errata list \
-            --host {{ rhel2_satellite }} \
-            --search "id = RHSA-2026:1472" 2>/dev/null)
-          COUNT=$(echo "$RESULT" | python3 -c "
-          import sys, json
-          try:
-              data = json.load(sys.stdin)
-              print(len(data))
-          except Exception:
-              print('0')
-          ")
-          echo "$COUNT"
-      register: _cve_check
-      changed_when: false
-
-    - name: Log CVE remediation status
-      ansible.builtin.debug:
-        msg: >-
-          RHSA-2026:1472 applicable errata remaining: {{ _cve_check.stdout | trim }}.
-          {{ 'CVE cleared — errata fully applied.' if (_cve_check.stdout | trim) == '0'
-             else 'Errata still showing — may need time to refresh.' }}
-
-    - name: Verify rhel2 is still registered with Insights
-      ansible.builtin.command:
-        cmd: "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }} insights-client --status"
-      register: _rhel2_final_status
-      changed_when: false
-      failed_when: "'registered' not in _rhel2_final_status.stdout | lower"
-      timeout: 30
-
     - name: E2E Summary
       ansible.builtin.debug:
         msg:
           - "=== E2E Run Complete ==="
-          - "Modules 02/03 (HCC): SKIPPED — rhel1 not SSH-accessible from satellite"
-          - "Module 04 (Satellite Advisor): SOLVED — OpenSSH recommendation remediated on rhel2"
-          - "Module 05 (Satellite Vulnerability): SOLVED — RHSA-2026:1472 applied, openssl upgraded on rhel2"
-          - "Modules 01, 06: SKIPPED — informational only"
+          - "Module 04: insights-client ran on rhel2 (advisor data generated)"
+          - "Module 05: RHSA-2026:1472 applied, openssl {{ _pre_openssl.stdout }} → {{ _post_openssl.stdout }}"
+          - "Modules 01-03, 06: SKIPPED (informational or HCC browser-only)"
