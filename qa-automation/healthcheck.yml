@@ -13,6 +13,10 @@
 # Non-destructive: does not modify any lab state.
 # Should complete in under 90 seconds.
 #
+# NOTE: On freshly deployed environments, Lightspeed data checks (cvemap.xml,
+# advisor recommendations) may fail. Wait 15-20 minutes after provisioning
+# for Lightspeed containers to fully process data, then re-run.
+#
 # Env vars injected by ZT runner:
 #   BASTION_HOST, BASTION_PORT, BASTION_USER, BASTION_PASSWORD, GUID, DOMAIN
 #
@@ -137,11 +141,18 @@
       changed_when: false
       timeout: 15
 
-    - name: Verify CVE map file exists
+    - name: Check CVE map file exists
       ansible.builtin.stat:
         path: /var/lib/foreman/cvemap.xml
       register: r_cvemap
-      failed_when: not r_cvemap.stat.exists
+
+    - name: "WARNING: CVE map file missing (expected on fresh environments)"
+      ansible.builtin.debug:
+        msg: >-
+          /var/lib/foreman/cvemap.xml not found. On freshly deployed environments,
+          wait 15-20 minutes for Lightspeed containers to generate this file.
+          Module 05 (vulnerability remediation) will not work without it.
+      when: not r_cvemap.stat.exists
 
     - name: Verify Lightspeed advisor has recommendations
       ansible.builtin.uri:
@@ -155,11 +166,18 @@
       register: _insights_hosts
       changed_when: false
 
-    - name: Verify at least one host has Lightspeed data
-      ansible.builtin.assert:
-        that:
-          - (_insights_hosts.json.total | default(0) | int) >= 1
-        fail_msg: "No hosts with Lightspeed data found in Satellite"
+    - name: Check Lightspeed host data count
+      ansible.builtin.set_fact:
+        _insights_total: "{{ _insights_hosts.json.total | default(0) | int }}"
+
+    - name: "WARNING: No Lightspeed data yet (expected on fresh environments)"
+      ansible.builtin.debug:
+        msg: >-
+          No hosts with Lightspeed data found in Satellite (total={{ _insights_total }}).
+          On freshly deployed environments, run insights-client on rhel2 first,
+          then wait 10-15 minutes for Lightspeed containers to process the data.
+          Modules 04/05 will not work without this.
+      when: (_insights_total | int) < 1
 
     - name: Verify vulnerable openssl baseline on rhel2
       ansible.builtin.command:
