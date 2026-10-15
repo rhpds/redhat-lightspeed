@@ -129,10 +129,11 @@
     satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
     guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
     rhel2: "rhel-{{ guid }}-2"
+    rhel2_satellite: "rhel-{{ guid }}-2.lab"
   tasks:
     - name: Verify rhel2 is registered in Satellite
       ansible.builtin.command:
-        cmd: hammer host info --name rhel2.lab
+        cmd: "hammer host info --name {{ rhel2_satellite }}"
       changed_when: false
       timeout: 15
 

@@ -77,6 +77,7 @@
     satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
     guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
     rhel2: "rhel-{{ guid }}-2"
+    rhel2_satellite: "rhel-{{ guid }}-2.lab"
   tasks:
     - name: Record pre-remediation sshd config on rhel2
       ansible.builtin.command:
@@ -117,7 +118,7 @@
       ansible.builtin.shell:
         cmd: |
           RULE_ID=$(hammer --output json host-insights recommendation list \
-            --host rhel2.lab 2>/dev/null \
+            --host {{ rhel2_satellite }} 2>/dev/null \
             | python3 -c "
           import sys, json
           try:
@@ -137,7 +138,7 @@
           echo "Found recommendation: $RULE_ID"
           hammer job-invocation create \
             --job-template "Insights Remediation - Ansible Default" \
-            --search-query "name = rhel2.lab" \
+            --search-query "name = {{ rhel2_satellite }}" \
             --inputs "rule_id=$RULE_ID" 2>&1 || true
       register: _remediation_trigger
       timeout: 120
@@ -204,6 +205,7 @@
   vars:
     guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
     rhel2: "rhel-{{ guid }}-2"
+    rhel2_satellite: "rhel-{{ guid }}-2.lab"
   tasks:
     - name: Record pre-patch openssl version on rhel2
       ansible.builtin.command:
@@ -219,7 +221,7 @@
       ansible.builtin.command:
         cmd: >-
           hammer host errata apply
-          --host rhel2.lab
+          --host {{ rhel2_satellite }}
           --errata-ids RHSA-2026:1472
       register: _errata_apply
       timeout: 300
@@ -251,6 +253,7 @@
     satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
     guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
     rhel2: "rhel-{{ guid }}-2"
+    rhel2_satellite: "rhel-{{ guid }}-2.lab"
   tasks:
     - name: Verify openssl upgraded on rhel2
       ansible.builtin.command:
@@ -274,7 +277,7 @@
       ansible.builtin.shell:
         cmd: |
           RESULT=$(hammer --output json host errata list \
-            --host rhel2.lab \
+            --host {{ rhel2_satellite }} \
             --search "id = RHSA-2026:1472" 2>/dev/null)
           COUNT=$(echo "$RESULT" | python3 -c "
           import sys, json
