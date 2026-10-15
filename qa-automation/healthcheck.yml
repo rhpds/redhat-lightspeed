@@ -5,9 +5,7 @@
 #   - Satellite host is reachable and services are operational
 #   - RHEL target hosts are reachable from satellite (ping)
 #   - SSH to rhel2 works (satellite-managed, key auth)
-#   - Note: rhel1 is NOT SSH-accessible from satellite (different credentials)
 #   - HCC/Akamai connectivity verified via satellite curl to API endpoints
-#   - Module 02/03 preconditions: rhel1 reachable, wetty terminal up
 #   - Module 04/05 preconditions: rhel2 registered in Satellite, advisor
 #     recommendation present, CVE baseline (vulnerable openssl), errata available
 #   - Wetty terminals are accessible
@@ -97,7 +95,7 @@
   tasks:
     - name: Verify DNS resolution for cert-api.access.redhat.com
       ansible.builtin.command:
-        cmd: host cert-api.access.redhat.com
+        cmd: getent hosts cert-api.access.redhat.com
       register: _hcc_dns
       changed_when: false
       failed_when: _hcc_dns.rc != 0
@@ -123,7 +121,7 @@
 
     - name: Verify DNS resolution for console.redhat.com
       ansible.builtin.command:
-        cmd: host console.redhat.com
+        cmd: getent hosts console.redhat.com
       register: _console_dns
       changed_when: false
       failed_when: _console_dns.rc != 0
