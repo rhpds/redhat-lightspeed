@@ -53,7 +53,7 @@
 
 # ── Module 05: Apply errata for CVE-2025-15467 ────────────────────
 # Student applies RHSA-2026:1472 via Satellite UI Content tab.
-# We automate via hammer host errata apply.
+# We automate via hammer job-invocation (Satellite 6.19+ requires REX).
 
 - name: "Module 05 - Apply errata RHSA-2026:1472"
   hosts: satellite
@@ -74,12 +74,13 @@
       ansible.builtin.debug:
         msg: "rhel2 openssl before: {{ _pre_openssl.stdout }}"
 
-    - name: Apply errata RHSA-2026:1472 to rhel2
+    - name: Apply errata RHSA-2026:1472 via remote execution
       ansible.builtin.command:
         cmd: >-
-          hammer host errata apply
-          --host {{ rhel2_satellite }}
-          --errata-ids RHSA-2026:1472
+          hammer job-invocation create
+          --feature katello_errata_install
+          --search-query "name = {{ rhel2_satellite }}"
+          --inputs "errata=RHSA-2026:1472"
       register: _errata_apply
       timeout: 300
       changed_when: true
@@ -90,7 +91,7 @@
 
     - name: Wait for errata installation to complete
       ansible.builtin.pause:
-        seconds: 60
+        seconds: 90
 
 - name: "Module 05 - Validate: openssl upgraded"
   hosts: satellite
