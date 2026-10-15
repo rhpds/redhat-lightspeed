@@ -6,11 +6,17 @@
 #
 # Module order:
 #   01-overview          → skip (informational)
-#   02-hcc-vulnerabilities → validate only (HCC UI — no automation possible)
-#   03-hcc-compliance    → solve (insights-client + --compliance) + validate
+#   02-hcc-vulnerabilities → skip (HCC UI only, rhel1 not SSH-accessible)
+#   03-hcc-compliance    → skip (rhel1 not SSH-accessible from satellite)
 #   04-satellite-advisor → solve (insights-client + remediate OpenSSH) + validate
 #   05-satellite-vulnerability → solve (apply errata RHSA-2026:1472) + validate
 #   06-recap             → skip (informational)
+#
+# Note: rhel1 (HCC-connected host) has separate credentials and is not
+# SSH-accessible from satellite. Students access it via wetty terminal.
+# Modules 02/03 require rhel1 terminal access and cannot be automated
+# from the ZT runner. Load testing focuses on modules 04+05 which
+# exercise the Satellite Lightspeed containers and rhel2.
 #
 # Env vars injected by ZT runner:
 #   BASTION_HOST, BASTION_PORT, BASTION_USER, BASTION_PASSWORD, GUID, DOMAIN
@@ -31,88 +37,30 @@
         ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
         groups: satellite
 
-# ── Module 02: HCC Vulnerabilities ──────────────────────────────────
-# Student action: browse CVEs on console.redhat.com (external SaaS UI)
-# Solve: not possible — HCC browser-only actions
-# Validate: rhel1 is registered and has CVE data flowing to Insights
+# ── Modules 02/03: HCC (rhel1) ────────────────────────────────────
+# Skipped — rhel1 is not SSH-accessible from satellite.
+# Students run insights-client and --compliance via wetty terminal.
+# These modules generate HCC/Akamai load but cannot be automated
+# from the ZT runner.
 
-- name: "Module 02 - Validate: rhel1 registered to Insights with CVE data"
+- name: "Modules 02/03 - Skip: rhel1 not accessible from satellite"
   hosts: satellite
   gather_facts: false
   become: true
   vars:
     guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
-    bastion_password: "{{ lookup('ansible.builtin.env', 'BASTION_PASSWORD') }}"
     rhel1: "rhel-{{ guid }}-1"
   tasks:
-    - name: Verify rhel1 is registered to Insights
-      ansible.builtin.shell:
-        cmd: >-
-          sshpass -p '{{ bastion_password }}'
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10
-          root@{{ rhel1 }} insights-client --status
-      register: _rhel1_insights
+    - name: Verify rhel1 is at least pingable
+      ansible.builtin.command: "ping -c 1 -W 5 {{ rhel1 }}"
       changed_when: false
-      failed_when: "'registered' not in _rhel1_insights.stdout | lower"
-      timeout: 60
 
-    - name: Log Insights registration status
+    - name: Log module 02/03 skip reason
       ansible.builtin.debug:
-        msg: "rhel1 Insights status: {{ _rhel1_insights.stdout }}"
-
-# ── Module 03: HCC Compliance ───────────────────────────────────────
-# Student action: create SCAP policy on HCC (UI), run insights-client
-#   --compliance on rhel1 (terminal), review report on HCC (UI)
-# Solve: run insights-client (upload to HCC) then compliance scan
-# Validate: scan completed and data uploaded
-
-- name: "Module 03 - Solve: Upload Insights data and run compliance scan on rhel1"
-  hosts: satellite
-  gather_facts: false
-  become: true
-  vars:
-    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
-    bastion_password: "{{ lookup('ansible.builtin.env', 'BASTION_PASSWORD') }}"
-    rhel1: "rhel-{{ guid }}-1"
-  tasks:
-    - name: Run insights-client on rhel1 (HCC data upload — generates Akamai-bound load)
-      ansible.builtin.shell:
-        cmd: >-
-          sshpass -p '{{ bastion_password }}'
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10
-          root@{{ rhel1 }} insights-client
-      register: _rhel1_insights_upload
-      timeout: 300
-      changed_when: true
-
-    - name: Show insights-client upload output
-      ansible.builtin.debug:
-        msg: "{{ _rhel1_insights_upload.stdout_lines | default([]) }}"
-
-    - name: Run insights-client --compliance on rhel1
-      ansible.builtin.shell:
-        cmd: >-
-          sshpass -p '{{ bastion_password }}'
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10
-          root@{{ rhel1 }} insights-client --compliance
-      register: _compliance_scan
-      timeout: 600
-      changed_when: true
-
-    - name: Show compliance scan output
-      ansible.builtin.debug:
-        msg: "{{ _compliance_scan.stdout_lines | default([]) }}"
-
-- name: "Module 03 - Validate: Compliance data uploaded"
-  hosts: satellite
-  gather_facts: false
-  become: true
-  tasks:
-    - name: Verify compliance scan completed successfully
-      ansible.builtin.assert:
-        that:
-          - _compliance_scan.rc == 0
-        fail_msg: "insights-client --compliance failed with rc={{ _compliance_scan.rc }}"
+        msg: >-
+          Modules 02 (HCC Vulnerabilities) and 03 (HCC Compliance) SKIPPED.
+          rhel1 ({{ rhel1 }}) is the HCC-connected host with separate credentials.
+          Not SSH-accessible from satellite. Students use wetty terminal.
 
 # ── Module 04: Satellite Advisor ────────────────────────────────────
 # Student action: run insights-client on rhel2 (terminal), log into
@@ -359,8 +307,7 @@
       ansible.builtin.debug:
         msg:
           - "=== E2E Run Complete ==="
-          - "Module 02 (HCC Vulnerabilities): VALIDATED — rhel1 registered to Insights"
-          - "Module 03 (HCC Compliance): SOLVED — insights-client upload + compliance scan ran on rhel1"
+          - "Modules 02/03 (HCC): SKIPPED — rhel1 not SSH-accessible from satellite"
           - "Module 04 (Satellite Advisor): SOLVED — OpenSSH recommendation remediated on rhel2"
           - "Module 05 (Satellite Vulnerability): SOLVED — RHSA-2026:1472 applied, openssl upgraded on rhel2"
           - "Modules 01, 06: SKIPPED — informational only"

@@ -3,9 +3,11 @@
 #
 # Verifies:
 #   - Satellite host is reachable and services are operational
-#   - RHEL target hosts are reachable from satellite
-#   - HCC/Akamai connectivity from rhel1 (catches conference WiFi blocks)
-#   - Module 02/03 preconditions: rhel1 registered to Insights (HCC connected)
+#   - RHEL target hosts are reachable from satellite (ping)
+#   - SSH to rhel2 works (satellite-managed, key auth)
+#   - Note: rhel1 is NOT SSH-accessible from satellite (different credentials)
+#   - HCC/Akamai connectivity verified via satellite curl to API endpoints
+#   - Module 02/03 preconditions: rhel1 reachable, wetty terminal up
 #   - Module 04/05 preconditions: rhel2 registered in Satellite, advisor
 #     recommendation present, CVE baseline (vulnerable openssl), errata available
 #   - Wetty terminals are accessible
@@ -71,11 +73,10 @@
   become: true
   vars:
     guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
-    bastion_password: "{{ lookup('ansible.builtin.env', 'BASTION_PASSWORD') }}"
     rhel1: "rhel-{{ guid }}-1"
     rhel2: "rhel-{{ guid }}-2"
   tasks:
-    - name: Verify rhel1 is reachable (ping)
+    - name: Verify rhel1 is reachable (ping only — no SSH from satellite)
       ansible.builtin.command: "ping -c 1 -W 5 {{ rhel1 }}"
       changed_when: false
 
@@ -83,105 +84,54 @@
       ansible.builtin.command: "ping -c 1 -W 5 {{ rhel2 }}"
       changed_when: false
 
-    - name: Verify SSH to rhel1 (password auth)
-      ansible.builtin.shell:
-        cmd: >-
-          sshpass -p '{{ bastion_password }}'
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10
-          root@{{ rhel1 }} hostname
-      changed_when: false
-      timeout: 30
-
-    - name: Verify SSH to rhel2 (key auth)
+    - name: Verify SSH to rhel2 (satellite-managed, key auth)
       ansible.builtin.command:
         cmd: "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@{{ rhel2 }} hostname"
       changed_when: false
       timeout: 30
 
-- name: Healthcheck - HCC/Akamai connectivity from rhel1
+- name: Healthcheck - HCC/Akamai connectivity (from satellite)
   hosts: satellite
   gather_facts: false
   become: true
-  vars:
-    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
-    bastion_password: "{{ lookup('ansible.builtin.env', 'BASTION_PASSWORD') }}"
-    rhel1: "rhel-{{ guid }}-1"
   tasks:
-    - name: Verify DNS resolution for cert-api.access.redhat.com from rhel1
-      ansible.builtin.shell:
-        cmd: >-
-          sshpass -p '{{ bastion_password }}'
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10
-          root@{{ rhel1 }} host cert-api.access.redhat.com
+    - name: Verify DNS resolution for cert-api.access.redhat.com
+      ansible.builtin.command:
+        cmd: host cert-api.access.redhat.com
       register: _hcc_dns
       changed_when: false
       failed_when: _hcc_dns.rc != 0
-      timeout: 30
+      timeout: 15
 
     - name: Log HCC DNS resolution
       ansible.builtin.debug:
         msg: "{{ _hcc_dns.stdout }}"
 
     - name: Verify HTTPS connectivity to Insights upload endpoint (Akamai)
-      ansible.builtin.shell:
+      ansible.builtin.command:
         cmd: >-
-          sshpass -p '{{ bastion_password }}'
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10
-          root@{{ rhel1 }}
           curl -sk -o /dev/null -w '%{http_code}' --max-time 15
           https://cert-api.access.redhat.com/r/insights/
       register: _hcc_https
       changed_when: false
       failed_when: _hcc_https.stdout not in ['200', '401', '403', '405', '301', '302']
-      timeout: 45
+      timeout: 30
 
     - name: Log HCC/Akamai HTTPS status
       ansible.builtin.debug:
         msg: "Insights upload endpoint returned HTTP {{ _hcc_https.stdout }} (non-block = healthy)"
 
-    - name: Verify DNS resolution for console.redhat.com from rhel1
-      ansible.builtin.shell:
-        cmd: >-
-          sshpass -p '{{ bastion_password }}'
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10
-          root@{{ rhel1 }} host console.redhat.com
+    - name: Verify DNS resolution for console.redhat.com
+      ansible.builtin.command:
+        cmd: host console.redhat.com
       register: _console_dns
       changed_when: false
       failed_when: _console_dns.rc != 0
-      timeout: 30
+      timeout: 15
 
     - name: Log console.redhat.com DNS resolution
       ansible.builtin.debug:
         msg: "{{ _console_dns.stdout }}"
-
-- name: Healthcheck - Module 02/03 preconditions (HCC connected environment)
-  hosts: satellite
-  gather_facts: false
-  become: true
-  vars:
-    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
-    bastion_password: "{{ lookup('ansible.builtin.env', 'BASTION_PASSWORD') }}"
-    rhel1: "rhel-{{ guid }}-1"
-  tasks:
-    - name: Verify insights-client is installed on rhel1
-      ansible.builtin.shell:
-        cmd: >-
-          sshpass -p '{{ bastion_password }}'
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10
-          root@{{ rhel1 }} rpm -q insights-client
-      changed_when: false
-      timeout: 30
-
-    - name: Verify rhel1 is registered to Insights
-      ansible.builtin.shell:
-        cmd: >-
-          sshpass -p '{{ bastion_password }}'
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10
-          root@{{ rhel1 }} insights-client --status
-      register: _rhel1_insights_status
-      changed_when: false
-      failed_when: "'registered' not in _rhel1_insights_status.stdout | lower"
-      timeout: 60
 
 - name: Healthcheck - Module 04/05 preconditions (Satellite disconnected environment)
   hosts: satellite
