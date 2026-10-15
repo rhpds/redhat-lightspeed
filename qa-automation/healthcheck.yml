@@ -3,10 +3,10 @@
 #
 # Verifies:
 #   - Satellite host is reachable and services are operational
-#   - RHEL target hosts (rhel1.lab, rhel2.lab) are reachable from satellite
-#   - HCC/Akamai connectivity from rhel1.lab (catches conference WiFi blocks)
-#   - Module 02/03 preconditions: rhel1.lab registered to Insights (HCC connected)
-#   - Module 04/05 preconditions: rhel2.lab registered in Satellite, advisor
+#   - RHEL target hosts are reachable from satellite
+#   - HCC/Akamai connectivity from rhel1 (catches conference WiFi blocks)
+#   - Module 02/03 preconditions: rhel1 registered to Insights (HCC connected)
+#   - Module 04/05 preconditions: rhel2 registered in Satellite, advisor
 #     recommendation present, CVE baseline (vulnerable openssl), errata available
 #   - Wetty terminals are accessible
 #
@@ -69,35 +69,42 @@
   hosts: satellite
   gather_facts: false
   become: true
+  vars:
+    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
+    rhel1: "rhel-{{ guid }}-1"
+    rhel2: "rhel-{{ guid }}-2"
   tasks:
-    - name: Verify rhel1.lab is reachable
-      ansible.builtin.command: ping -c 1 -W 5 rhel1.lab
+    - name: Verify rhel1 is reachable
+      ansible.builtin.command: "ping -c 1 -W 5 {{ rhel1 }}"
       changed_when: false
 
-    - name: Verify rhel2.lab is reachable
-      ansible.builtin.command: ping -c 1 -W 5 rhel2.lab
+    - name: Verify rhel2 is reachable
+      ansible.builtin.command: "ping -c 1 -W 5 {{ rhel2 }}"
       changed_when: false
 
-    - name: Verify SSH to rhel1.lab
+    - name: Verify SSH to rhel1
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab hostname
+        cmd: "ssh -o StrictHostKeyChecking=no root@{{ rhel1 }} hostname"
       changed_when: false
       timeout: 15
 
-    - name: Verify SSH to rhel2.lab
+    - name: Verify SSH to rhel2
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel2.lab hostname
+        cmd: "ssh -o StrictHostKeyChecking=no root@{{ rhel2 }} hostname"
       changed_when: false
       timeout: 15
 
-- name: Healthcheck - HCC/Akamai connectivity from rhel1.lab
+- name: Healthcheck - HCC/Akamai connectivity from rhel1
   hosts: satellite
   gather_facts: false
   become: true
+  vars:
+    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
+    rhel1: "rhel-{{ guid }}-1"
   tasks:
-    - name: Verify DNS resolution for cert-api.access.redhat.com from rhel1.lab
+    - name: Verify DNS resolution for cert-api.access.redhat.com from rhel1
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab host cert-api.access.redhat.com
+        cmd: "ssh -o StrictHostKeyChecking=no root@{{ rhel1 }} host cert-api.access.redhat.com"
       register: _hcc_dns
       changed_when: false
       failed_when: _hcc_dns.rc != 0
@@ -110,7 +117,7 @@
     - name: Verify HTTPS connectivity to Insights upload endpoint (Akamai)
       ansible.builtin.command:
         cmd: >-
-          ssh -o StrictHostKeyChecking=no root@rhel1.lab
+          ssh -o StrictHostKeyChecking=no root@{{ rhel1 }}
           curl -sk -o /dev/null -w '%{http_code}' --max-time 15
           https://cert-api.access.redhat.com/r/insights/
       register: _hcc_https
@@ -122,9 +129,9 @@
       ansible.builtin.debug:
         msg: "Insights upload endpoint returned HTTP {{ _hcc_https.stdout }} (non-block = healthy)"
 
-    - name: Verify DNS resolution for console.redhat.com from rhel1.lab
+    - name: Verify DNS resolution for console.redhat.com from rhel1
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab host console.redhat.com
+        cmd: "ssh -o StrictHostKeyChecking=no root@{{ rhel1 }} host console.redhat.com"
       register: _console_dns
       changed_when: false
       failed_when: _console_dns.rc != 0
@@ -138,16 +145,19 @@
   hosts: satellite
   gather_facts: false
   become: true
+  vars:
+    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
+    rhel1: "rhel-{{ guid }}-1"
   tasks:
-    - name: Verify insights-client is installed on rhel1.lab
+    - name: Verify insights-client is installed on rhel1
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab rpm -q insights-client
+        cmd: "ssh -o StrictHostKeyChecking=no root@{{ rhel1 }} rpm -q insights-client"
       changed_when: false
       timeout: 15
 
-    - name: Verify rhel1.lab is registered to Insights
+    - name: Verify rhel1 is registered to Insights
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel1.lab insights-client --status
+        cmd: "ssh -o StrictHostKeyChecking=no root@{{ rhel1 }} insights-client --status"
       register: _rhel1_insights_status
       changed_when: false
       failed_when: "'registered' not in _rhel1_insights_status.stdout | lower"
@@ -159,8 +169,10 @@
   become: true
   vars:
     satellite_password: "bc31c9a6-9ff0-11ec-9587-00155d1b0702"
+    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
+    rhel2: "rhel-{{ guid }}-2"
   tasks:
-    - name: Verify rhel2.lab is registered in Satellite
+    - name: Verify rhel2 is registered in Satellite
       ansible.builtin.command:
         cmd: hammer host info --name rhel2.lab
       changed_when: false
@@ -190,16 +202,16 @@
           - (_insights_hosts.json.total | default(0) | int) >= 1
         fail_msg: "No hosts with Lightspeed data found in Satellite"
 
-    - name: Verify vulnerable openssl baseline on rhel2.lab
+    - name: Verify vulnerable openssl baseline on rhel2
       ansible.builtin.command:
-        cmd: ssh -o StrictHostKeyChecking=no root@rhel2.lab rpm -q openssl
+        cmd: "ssh -o StrictHostKeyChecking=no root@{{ rhel2 }} rpm -q openssl"
       register: _rhel2_openssl
       changed_when: false
       timeout: 15
 
-    - name: Log openssl version on rhel2.lab
+    - name: Log openssl version on rhel2
       ansible.builtin.debug:
-        msg: "rhel2.lab openssl: {{ _rhel2_openssl.stdout }}"
+        msg: "rhel2 openssl: {{ _rhel2_openssl.stdout }}"
 
     - name: Verify errata RHSA-2026:1472 is available in Satellite
       ansible.builtin.command:
