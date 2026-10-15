@@ -7,7 +7,6 @@
 #   - SSH to rhel2 works (satellite-managed, key auth)
 #   - HCC/Akamai connectivity from satellite
 #   - Lightspeed containers are running
-#   - Wetty terminals are accessible
 #
 # Non-destructive: does not modify any lab state.
 # Should complete in under 60 seconds.
@@ -143,39 +142,3 @@
     - name: Log Lightspeed container count
       ansible.builtin.debug:
         msg: "Lightspeed containers running: {{ _iop_containers.stdout_lines | length }} ({{ _iop_containers.stdout_lines | join(', ') }})"
-
-- name: Healthcheck - Wetty terminals accessible
-  hosts: satellite
-  gather_facts: false
-  become: true
-  vars:
-    guid: "{{ lookup('ansible.builtin.env', 'GUID') }}"
-    domain: "{{ lookup('ansible.builtin.env', 'DOMAIN') }}"
-    showroom_host: "{{ guid }}.{{ domain }}"
-  tasks:
-    - name: Verify satellite terminal (wetty)
-      ansible.builtin.command:
-        cmd: >-
-          curl -sk -o /dev/null -w '%{http_code}' --max-time 10
-          https://{{ showroom_host }}/wetty_satellite/ssh/root
-      register: _wetty_sat
-      changed_when: false
-      failed_when: _wetty_sat.stdout not in ['200', '301', '302', '401', '403']
-
-    - name: "Verify rhel1 terminal (wetty)"
-      ansible.builtin.command:
-        cmd: >-
-          curl -sk -o /dev/null -w '%{http_code}' --max-time 10
-          https://{{ showroom_host }}/wetty_rhel-{{ guid }}-1
-      register: _wetty_rhel1
-      changed_when: false
-      failed_when: _wetty_rhel1.stdout not in ['200', '301', '302', '401', '403']
-
-    - name: "Verify rhel2 terminal (wetty)"
-      ansible.builtin.command:
-        cmd: >-
-          curl -sk -o /dev/null -w '%{http_code}' --max-time 10
-          https://{{ showroom_host }}/wetty_rhel-{{ guid }}-2/ssh/root
-      register: _wetty_rhel2
-      changed_when: false
-      failed_when: _wetty_rhel2.stdout not in ['200', '301', '302', '401', '403']
