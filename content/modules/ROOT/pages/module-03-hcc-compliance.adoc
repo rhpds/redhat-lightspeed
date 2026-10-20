@@ -242,7 +242,7 @@ Next, you should take a look at what failed and see what can be improved. +
 =====
 
 =====
-.Idenifying failed rules
+.Identifying failed rules 
 [%collapsible]
 ====
 
