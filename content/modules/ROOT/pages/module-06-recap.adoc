@@ -33,7 +33,7 @@ This service enables on-premise CVE identification for disconnected RHEL hosts â
 Red Hat Lightspeed in Satellite consists of a series of podman containers. + 
 These containers are included with the Satellite ISO image or can be downloaded from the image registry.  +
 Enabling Red Hat Lightspeed in Satellite does disable *ALL* connectivity with the Hybrid Cloud Console. +
-It also removed what are now irrelevant menu items inside of the Satellite user interface. +
+It also removes what are now irrelevant menu items inside of the Satellite user interface. +
 The Red Hat Lightspeed analysis happens right on the Satellite server and no information leaves the Satellite.   
 
 Updates to Red Hat Lightspeed in Satellite will be delivered in future Satellite releases. +
