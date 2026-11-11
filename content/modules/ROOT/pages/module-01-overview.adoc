@@ -38,8 +38,9 @@ For testing purposes, the lab environment includes:
 
 NOTE: Satellite retains an internet route solely for content updates; direct internet access is not permitted for hosts.
 
+[.fullscreen]
 .Testing Environment
-image::lb1187_M1_Labinfra[link=self, window=blank, width=100%]
+image::lb1187_M1_Labinfra.png[width=100%]
 
 NOTE: To see an image full screen, right-click on the image and select "Open Image in New Tab" or the equivalent option for your browser.
 
