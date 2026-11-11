@@ -3,7 +3,7 @@
 = Welcome to Infinicorp - we have tasks for you!
 
 .Infinicorp Logo
-image::lb1187_M1_Infinicorp_Logo.png[link=self, window=blank, width=100%^]
+image::lb1187_M1_Infinicorp_Logo.png[width=100%^]
 
 Infinicorp needs your help to update management of our Red Hat Enterprise Linux environments.
 
@@ -11,8 +11,9 @@ Infinicorp Robotics Solutions, headquartered here in sunny Las Vegas NV, is a la
 
 Most of our manufacturing facilities are in the continental United States, primarily Pasadena California, Houston Texas, Columbus Ohio, and Herndon Virginia. 
 
+[.fullscreen]
 .Infinicorp Locations
-image::lb1187_M1_Infinicorp.png[link=self, window=blank, width=100%]
+image::lb1187_M1_Infinicorp.png[width=100%]
 
 In each location there is a manufacturing facility, datacenter, and office buildings.  
 
@@ -38,7 +39,7 @@ For testing purposes, the lab environment includes:
 NOTE: Satellite retains an internet route solely for content updates; direct internet access is not permitted for hosts.
 
 .Testing Environment
-image::lb1187_M1_Labinfra.png[link=self, window=blank, width=100%]
+image::lb1187_M1_Labinfra[link=self, window=blank, width=100%]
 
 NOTE: To see an image full screen, right-click on the image and select "Open Image in New Tab" or the equivalent option for your browser.
 
@@ -120,8 +121,9 @@ The table below highlights the different ways that you can connect to Red Hat Li
 
 NOTE: The table below correctly refers to the insights client.  Though the name of Red Hat Insights has changed to Red Hat Lightspeed, the package name and command line is still insights-client.
 
+[.fullscreen]
 .Ways to connect to Red Hat Lightspeed
-image::LB1141_M01_ConnectivityOptions.png[link=self, window=blank, width=100%]
+image::LB1141_M01_ConnectivityOptions.png[width=100%]
 
 ====
 =====
