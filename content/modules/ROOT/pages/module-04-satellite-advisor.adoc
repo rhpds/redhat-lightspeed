@@ -33,8 +33,9 @@ NOTE: Though the name of Insights changed to Red Hat Lightspeed, packages, comma
 
 1. From your showroom environment, click the tab labeled `rhel-{guid}-2 terminal`.
 
+[.fullscreen]
 .rhel-{guid}-2 terminal tab
-image::LB1141_M04_000.png[link=self, window=blank, width=100%]
+image::LB1141_M04_000.png[width=100%]
 
 [start=2]
 2. Run the following command:
@@ -46,8 +47,9 @@ insights-client
 
 Running the insights-client command will collect and upload data to Satellite which will run the advisor analysis locally.
 
+[.fullscreen]
 .Output of insights-client command
-image::LB1141_M04_00.png[link=self, window=blank, width=100%]
+image::LB1141_M04_00.png[width=100%]
 
 NOTE: The insights-client will refer to uploading data and a report.  This data/report is uploaded to the Satellite server. No information is sent to the Hybrid Cloud Console.
 
@@ -62,8 +64,9 @@ Do not move onto the next step until the operation is complete and you are retur
 
 . Click on the tab labelled Satellite Web UI as shown in the image below.
 
+[.fullscreen]
 .Satellite Web UI tab
-image::LB1141_M04_01-00.png[link=self, window=blank, width=100%]
+image::LB1141_M04_01-00.png[width=100%]
 
 [start=2]
 . Log in credentials
@@ -84,11 +87,13 @@ bc31c9a6-9ff0-11ec-9587-00155d1b0702
 
 Now click `+Log In+`.
 
+[.fullscreen]
 .Login menu
-image::LB1141_M04_01.png[link=self, window=blank, width=100%]
+image::LB1141_M04_01.png[width=100%]
 
 You will be taken to the main dashboard.
 
+[.fullscreen]
 .Satellite WebGUI dashboard
 image::LB1141_M04_02.png[../assets/main-menu]
 
@@ -97,6 +102,7 @@ image::LB1141_M04_02.png[../assets/main-menu]
 
 You will see `Recommendations` and `Vulnerability`.
 
+[.fullscreen]
 .Red Hat Lightspeed in Satellite Menu
 image::Sat_Insights_Connected_Menu.png[]
 
@@ -148,14 +154,16 @@ Since the type is `Playbook` this means that there is an Ansible playbook availa
 
 To get more details you will need to select the issue.
 
+[.fullscreen]
 .Recommendation page
-image::LB1141_M04_03.png[link=self, window=blank, width=100%]
+image::LB1141_M04_03.png[width=100%]
 
 [start=2]
 . Click the issue. You'll be taken to a new page containing the details of the issue.
 
+[.fullscreen]
 .OpenSSH Recommendation details page
-image::decreased-security-advisor-details.png[link=self, window=blank, width=100%]
+image::decreased-security-advisor-details.png[width=100%]
 
 The details page gives you high level information about the risk that was found and links to a Knowledgebase article if you need to get more information about the issue.  +
 
@@ -173,8 +181,9 @@ You should go ahead and create a playbook that you can evaluate and send to the 
 
 . Select the hosts that are affected by the issue by clicking on the checkbox to the left of the host name.
 
+[.fullscreen]
 .Select affected systems
-image::selected-hosts.png[link=self, window=blank, width=100%]
+image::selected-hosts.png[width=100%]
 
 [start=4]
 . With a host selected, both the `Remediate` and the `Download playbook` buttons become available. +
@@ -205,8 +214,9 @@ In this case the default resolution is to set the ClientMaxAlive and ClientAlive
 . Click `Remediate`. +
 This will redirect you to Monitor → Jobs where you can see the job running that you just initiated. This job may take 2-5 minutes to complete. Wait for the results to show success. +
 
+[.fullscreen]
 .Remediation status page
-image::LB1141_M04_07.png[link=self, window=blank, width=100%]
+image::LB1141_M04_07.png[width=100%]
 
 
 [start=9]
@@ -229,8 +239,9 @@ Fortunately this is very easy to see inside of the Satellite user interface (or 
 
 From the last section you should be in the Satellite user interface in Red Hat Lightspeed → Recommendations.  
 
+[.fullscreen]
 .All Recommendations fixed
-image::LB1141_M04_08.png[link=self, window=blank, width=100%]
+image::LB1141_M04_08.png[width=100%]
 
 Notice in the image above that while you have no recommendations, there are still default filters applied. +
 This is because Red Hat Lightspeed wants to focus on things that are actively impacting your systems. +
@@ -242,8 +253,9 @@ To see the full list of recommendations, you will need to remove these filters a
 1. Locate the filters and remove the two default filters by clicking the `x` to the right of them. +
 In the image below there are 2026 total recommendations listed. +
 
+[.fullscreen]
 .Filters removed
-image::LB1141_M04_09.png[link=self, window=blank, width=100%]
+image::LB1141_M04_09.png[width=100%]
 
 With the full list showing, all you need to do is search.
 
@@ -252,8 +264,9 @@ With the full list showing, all you need to do is search.
 This will list all Recommendations that have SAP in the name or description. +
 In the image below there are 55 recommendations for SAP.
 
+[.fullscreen]
 .SAP Recommendations
-image::lb1187_M4_SAP.png[link=self, window=blank, width=100%]
+image::lb1187_M4_SAP.png[width=100%]
 
 Recommendations are commonly created by Red Hat from support cases, best practices guides, or commonly encountered issues.  There are a large variety of Recommendations to help your systems operate to their full potential.
 ====
