@@ -16,7 +16,7 @@ In this environment your first task is to review the Satellite connected 10.1 ho
 
 == Host recommendations with Red Hat Lightspeed in Satellite
 
-Satellite has been preinstalled and installation and configuration of Lightspeed in Satellite is out of scope for this lab.
+Satellite has been preinstalled and installation and configuration of Red Hat Lightspeed in Satellite is out of scope for this lab.
 
 Expand a section below to complete the tasks in that section.  
 Please complete each section in order.
