@@ -14,7 +14,7 @@ For Satellite connected systems: +
 
 Great job - thank you for all of your assistance, and we hope that you learned some things along the way.
 
-= Now, a word from the product team.
+== Now, a word from the product team.
 
 During the course of this lab, the Red Hat Lightspeed and Satellite teams wanted to highlight a few different things.
 
