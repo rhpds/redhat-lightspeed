@@ -11,6 +11,8 @@ content:
       start_path: content
 
 ui:
+  # Bump this path with the theme version so browsers don't reuse old assets.
+  output_dir: _/pages-theme-v2.0.3
   bundle:
     url: https://github.com/rhpds/rhdp_showroom_theme/releases/download/v2.0.3/ui-bundle.zip
 
